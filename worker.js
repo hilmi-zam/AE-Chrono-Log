@@ -134,6 +134,101 @@ if (url.pathname === "/api/transactions" && request.method === "POST") {
   }
 }
 
+const transactionIdMatch = url.pathname.match(/^\/api\/transactions\/(\d+)$/);
+if (transactionIdMatch && ["PUT", "DELETE"].includes(request.method)) {
+  const transactionId = Number(transactionIdMatch[1]);
+  if (!Number.isSafeInteger(transactionId) || transactionId < 1) {
+    return Response.json(
+      { error: "Invalid transaction ID" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  try {
+    if (request.method === "DELETE") {
+      const result = await env.DB
+        .prepare("DELETE FROM transactions WHERE id = ?")
+        .bind(transactionId)
+        .run();
+
+      if (result.meta.changes === 0) {
+        return Response.json(
+          { error: "Transaction not found" },
+          { status: 404, headers: { "Cache-Control": "no-store" } },
+        );
+      }
+
+      return Response.json(
+        { ok: true },
+        { headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    let transaction;
+    try {
+      transaction = await request.json();
+    } catch {
+      return Response.json(
+        { error: "Request body must be valid JSON" },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const type = transaction?.type;
+    const amount = transaction?.amount;
+    const categoryValue = transaction?.category;
+    const category =
+      typeof categoryValue === "string" ? categoryValue.trim() : "";
+    const transactionDate = transaction?.transaction_date;
+    const note = transaction?.note ?? null;
+    const parsedDate = new Date(`${transactionDate}T00:00:00.000Z`);
+    const validDate =
+      typeof transactionDate === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(transactionDate) &&
+      !Number.isNaN(parsedDate.getTime()) &&
+      parsedDate.toISOString().slice(0, 10) === transactionDate;
+
+    if (
+      !["income", "expense"].includes(type) ||
+      !Number.isSafeInteger(amount) ||
+      amount <= 0 ||
+      category.length === 0 ||
+      category.length > 100 ||
+      !validDate ||
+      (note !== null && (typeof note !== "string" || note.length > 2000))
+    ) {
+      return Response.json(
+        { error: "Invalid transaction fields" },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const result = await env.DB
+      .prepare(
+        "UPDATE transactions SET type = ?, amount = ?, category = ?, transaction_date = ?, note = ? WHERE id = ?",
+      )
+      .bind(type, amount, category, transactionDate, note, transactionId)
+      .run();
+
+    if (result.meta.changes === 0) {
+      return Response.json(
+        { error: "Transaction not found" },
+        { status: 404, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    return Response.json(
+      { ok: true, id: transactionId },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  } catch {
+    return Response.json(
+      { error: "Could not update transaction" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+}
+
 if (url.pathname === "/api/notes" && request.method === "GET") {
   try {
     const { results } = await env.DB
@@ -204,6 +299,96 @@ if (url.pathname === "/api/notes" && request.method === "POST") {
   } catch {
     return Response.json(
       { error: "Could not save note" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+}
+
+const noteIdMatch = url.pathname.match(/^\/api\/notes\/(\d+)$/);
+if (noteIdMatch && ["PUT", "DELETE"].includes(request.method)) {
+  const noteId = Number(noteIdMatch[1]);
+  if (!Number.isSafeInteger(noteId) || noteId < 1) {
+    return Response.json(
+      { error: "Invalid note ID" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  try {
+    if (request.method === "DELETE") {
+      const result = await env.DB
+        .prepare("DELETE FROM notes WHERE id = ?")
+        .bind(noteId)
+        .run();
+
+      if (result.meta.changes === 0) {
+        return Response.json(
+          { error: "Note not found" },
+          { status: 404, headers: { "Cache-Control": "no-store" } },
+        );
+      }
+
+      return Response.json(
+        { ok: true },
+        { headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    let note;
+    try {
+      note = await request.json();
+    } catch {
+      return Response.json(
+        { error: "Request body must be valid JSON" },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const title = typeof note?.title === "string" ? note.title.trim() : "";
+    const content = note?.content;
+    const noteDate = note?.note_date;
+    const parsedDate = new Date(`${noteDate}T00:00:00.000Z`);
+    const validDate =
+      typeof noteDate === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(noteDate) &&
+      !Number.isNaN(parsedDate.getTime()) &&
+      parsedDate.toISOString().slice(0, 10) === noteDate;
+
+    if (
+      title.length === 0 ||
+      title.length > 200 ||
+      typeof content !== "string" ||
+      content.trim().length === 0 ||
+      content.length > 50000 ||
+      !validDate
+    ) {
+      return Response.json(
+        { error: "Invalid note fields" },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const result = await env.DB
+      .prepare(
+        "UPDATE notes SET title = ?, content = ?, note_date = ? WHERE id = ?",
+      )
+      .bind(title, content, noteDate, noteId)
+      .run();
+
+    if (result.meta.changes === 0) {
+      return Response.json(
+        { error: "Note not found" },
+        { status: 404, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    return Response.json(
+      { ok: true, id: noteId },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  } catch {
+    return Response.json(
+      { error: "Could not update note" },
       { status: 500, headers: { "Cache-Control": "no-store" } },
     );
   }

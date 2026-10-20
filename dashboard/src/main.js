@@ -103,6 +103,10 @@ function renderApp() {
         <div id="notice" class="notice" role="status" hidden></div>
         <section class="page-content">${activePage}</section>
       </main>
+      <dialog id="edit-dialog" class="edit-dialog" aria-labelledby="edit-dialog-title">
+        <div class="dialog-heading"><h2 id="edit-dialog-title">Ubah data</h2><button class="icon-button dialog-close" type="button" data-action="close-dialog" aria-label="Tutup">×</button></div>
+        <form id="edit-form" class="stack-form"></form>
+      </dialog>
     </div>`
 }
 
@@ -124,7 +128,7 @@ function renderFinance() {
     <div class="finance-layout">
       <section class="content-section transaction-section">
         <div class="section-heading"><div><span class="section-kicker">AKTIVITAS</span><h2>Transaksi terbaru</h2></div><span class="count-label">${state.transactions.length} tercatat</span></div>
-        ${state.transactions.length ? `<div class="table-wrap"><table><thead><tr><th>Transaksi</th><th>Kategori</th><th>Tanggal</th><th class="amount-cell">Nominal</th></tr></thead><tbody>${state.transactions.map(transactionRow).join('')}</tbody></table></div>` : emptyState('Belum ada transaksi pada daftar.')}
+        ${state.transactions.length ? `<div class="table-wrap"><table><thead><tr><th>Transaksi</th><th>Kategori</th><th>Tanggal</th><th class="amount-cell">Nominal</th><th><span class="visually-hidden">Aksi</span></th></tr></thead><tbody>${state.transactions.map(transactionRow).join('')}</tbody></table></div>` : emptyState('Belum ada transaksi pada daftar.')}
       </section>
       <aside class="content-section category-section">
         <div class="section-heading"><div><span class="section-kicker">PEMETAAN</span><h2>Per kategori</h2></div></div>
@@ -151,7 +155,7 @@ function summaryCard(label, amount, tone, symbol) {
 function transactionRow(transaction) {
   const isIncome = transaction.type === 'income'
   const date = new Date(`${transaction.transaction_date}T00:00:00`).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
-  return `<tr><td><span class="transaction-name">${escapeHTML(transaction.note || (isIncome ? 'Pemasukan' : 'Pengeluaran'))}</span><span class="transaction-id">ID ${transaction.id}</span></td><td><span class="tag">${escapeHTML(transaction.category)}</span></td><td class="date-cell">${date}</td><td class="amount-cell ${isIncome ? 'positive' : 'negative'}">${isIncome ? '+' : '−'}${currency.format(transaction.amount)}</td></tr>`
+  return `<tr><td><span class="transaction-name">${escapeHTML(transaction.note || (isIncome ? 'Pemasukan' : 'Pengeluaran'))}</span><span class="transaction-id">ID ${transaction.id}</span></td><td><span class="tag">${escapeHTML(transaction.category)}</span></td><td class="date-cell">${date}</td><td class="amount-cell ${isIncome ? 'positive' : 'negative'}">${isIncome ? '+' : '−'}${currency.format(transaction.amount)}</td><td class="row-actions"><button class="text-action" type="button" data-action="edit" data-kind="transaction" data-id="${transaction.id}">Ubah</button><button class="text-action delete-action" type="button" data-action="delete" data-kind="transaction" data-id="${transaction.id}">Hapus</button></td></tr>`
 }
 
 function renderNotes() {
@@ -159,7 +163,7 @@ function renderNotes() {
     <div class="notes-intro"><div><span class="section-kicker">ARSIP PRIBADI</span><p class="muted">Catatan kuliah, rapat, dan hal yang perlu diingat.</p></div><span class="count-label">${state.notes.length} catatan</span></div>
     <div class="notes-layout">
       <section class="content-section note-list-section"><div class="section-heading"><div><span class="section-kicker">TERBARU</span><h2>Daftar catatan</h2></div></div>
-        ${state.notes.length ? `<div class="note-list">${state.notes.map((note) => `<article class="note-item"><div class="note-item-top"><span class="note-date">${new Date(`${note.note_date}T00:00:00`).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</span><span class="note-id">#${note.id}</span></div><h3>${escapeHTML(note.title)}</h3><p>${escapeHTML(note.content)}</p></article>`).join('')}</div>` : emptyState('Catatan yang disimpan akan muncul di sini.')}
+        ${state.notes.length ? `<div class="note-list">${state.notes.map((note) => `<article class="note-item"><div class="note-item-top"><span class="note-date">${new Date(`${note.note_date}T00:00:00`).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</span><span class="note-id">#${note.id}</span></div><h3>${escapeHTML(note.title)}</h3><p>${escapeHTML(note.content)}</p><div class="note-actions"><button class="text-action" type="button" data-action="edit" data-kind="note" data-id="${note.id}">Ubah</button><button class="text-action delete-action" type="button" data-action="delete" data-kind="note" data-id="${note.id}">Hapus</button></div></article>`).join('')}</div>` : emptyState('Catatan yang disimpan akan muncul di sini.')}
       </section>
       <section class="content-section note-form-section"><div class="section-heading"><div><span class="section-kicker">CATAT BARU</span><h2>Tulis catatan</h2></div></div>
         <form id="note-form" class="stack-form note-form">
@@ -196,6 +200,37 @@ async function loadData() {
   renderApp()
 }
 
+function openEditDialog(kind, id) {
+  const collection = kind === 'transaction' ? state.transactions : state.notes
+  const item = collection.find((entry) => entry.id === id)
+  if (!item) return
+
+  const dialog = document.querySelector('#edit-dialog')
+  const form = document.querySelector('#edit-form')
+  form.dataset.kind = kind
+  form.dataset.id = String(id)
+
+  if (kind === 'transaction') {
+    document.querySelector('#edit-dialog-title').textContent = 'Ubah transaksi'
+    form.innerHTML = `
+      <label>Jenis<select name="type"><option value="expense" ${item.type === 'expense' ? 'selected' : ''}>Pengeluaran</option><option value="income" ${item.type === 'income' ? 'selected' : ''}>Pemasukan</option></select></label>
+      <label>Nominal (Rp)<input name="amount" type="number" min="1" step="1" value="${item.amount}" required /></label>
+      <label>Kategori<input name="category" maxlength="100" value="${escapeHTML(item.category)}" required /></label>
+      <label>Tanggal<input name="transaction_date" type="date" value="${escapeHTML(item.transaction_date)}" required /></label>
+      <label>Catatan singkat<input name="note" maxlength="2000" value="${escapeHTML(item.note || '')}" /></label>
+      <div class="dialog-actions"><button class="button button-quiet" type="button" data-action="close-dialog">Batal</button><button class="button button-dark" type="submit">Simpan perubahan</button></div>`
+  } else {
+    document.querySelector('#edit-dialog-title').textContent = 'Ubah catatan'
+    form.innerHTML = `
+      <label>Judul<input name="title" maxlength="200" value="${escapeHTML(item.title)}" required /></label>
+      <label>Tanggal<input name="note_date" type="date" value="${escapeHTML(item.note_date)}" required /></label>
+      <label>Isi catatan<textarea name="content" rows="8" maxlength="50000" required>${escapeHTML(item.content)}</textarea></label>
+      <div class="dialog-actions"><button class="button button-quiet" type="button" data-action="close-dialog">Batal</button><button class="button button-dark" type="submit">Simpan perubahan</button></div>`
+  }
+
+  dialog.showModal()
+}
+
 app.addEventListener('submit', async (event) => {
   event.preventDefault()
   const form = event.target
@@ -208,6 +243,30 @@ app.addEventListener('submit', async (event) => {
     } catch (error) {
       state.authorization = ''
       renderLogin(error.message.includes('401') ? 'Password tidak cocok.' : error.message)
+    }
+    return
+  }
+
+  if (form.id === 'edit-form') {
+    const kind = form.dataset.kind
+    const id = Number(form.dataset.id)
+    const resource = kind === 'transaction' ? 'transactions' : 'notes'
+    const values = Object.fromEntries(new FormData(form))
+    if (kind === 'transaction') {
+      values.amount = Number(values.amount)
+      values.note = values.note.trim() || null
+    }
+
+    try {
+      await api(`/api/${resource}/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(values),
+      })
+      document.querySelector('#edit-dialog').close()
+      await loadData()
+      showNotice(kind === 'transaction' ? 'Transaksi berhasil diubah.' : 'Catatan berhasil diubah.')
+    } catch (error) {
+      showNotice(error.message, true)
     }
     return
   }
@@ -254,6 +313,35 @@ app.addEventListener('click', async (event) => {
     state.transactions = []
     state.notes = []
     renderLogin()
+  }
+
+  if (actionButton.dataset.action === 'close-dialog') {
+    document.querySelector('#edit-dialog')?.close()
+  }
+
+  if (actionButton.dataset.action === 'edit') {
+    openEditDialog(actionButton.dataset.kind, Number(actionButton.dataset.id))
+  }
+
+  if (actionButton.dataset.action === 'delete') {
+    const kind = actionButton.dataset.kind
+    const id = Number(actionButton.dataset.id)
+    const resource = kind === 'transaction' ? 'transactions' : 'notes'
+    const collection = kind === 'transaction' ? state.transactions : state.notes
+    const item = collection.find((entry) => entry.id === id)
+    const description = kind === 'transaction'
+      ? `${item?.type === 'income' ? 'Pemasukan' : 'Pengeluaran'} ${currency.format(item?.amount || 0)} (${item?.category || ''})`
+      : `catatan "${item?.title || ''}"`
+
+    if (item && window.confirm(`Hapus ${description}? Tindakan ini tidak dapat dibatalkan.`)) {
+      try {
+        await api(`/api/${resource}/${id}`, { method: 'DELETE' })
+        await loadData()
+        showNotice(kind === 'transaction' ? 'Transaksi berhasil dihapus.' : 'Catatan berhasil dihapus.')
+      } catch (error) {
+        showNotice(error.message, true)
+      }
+    }
   }
 
   if (actionButton.dataset.action === 'refresh') {
