@@ -134,6 +134,81 @@ if (url.pathname === "/api/transactions" && request.method === "POST") {
   }
 }
 
+if (url.pathname === "/api/notes" && request.method === "GET") {
+  try {
+    const { results } = await env.DB
+      .prepare(
+        "SELECT id, title, content, note_date, created_at FROM notes ORDER BY note_date DESC, id DESC LIMIT 100",
+      )
+      .all();
+
+    return Response.json(results, {
+      headers: { "Cache-Control": "no-store" },
+    });
+  } catch {
+    return Response.json(
+      { error: "Could not load notes" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+}
+
+if (url.pathname === "/api/notes" && request.method === "POST") {
+  let note;
+
+  try {
+    note = await request.json();
+  } catch {
+    return Response.json(
+      { error: "Request body must be valid JSON" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  const title = typeof note?.title === "string" ? note.title.trim() : "";
+  const content = note?.content;
+  const noteDate = note?.note_date;
+  const parsedDate = new Date(`${noteDate}T00:00:00.000Z`);
+  const validDate =
+    typeof noteDate === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(noteDate) &&
+    !Number.isNaN(parsedDate.getTime()) &&
+    parsedDate.toISOString().slice(0, 10) === noteDate;
+
+  if (
+    title.length === 0 ||
+    title.length > 200 ||
+    typeof content !== "string" ||
+    content.trim().length === 0 ||
+    content.length > 50000 ||
+    !validDate
+  ) {
+    return Response.json(
+      { error: "Invalid note fields" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  try {
+    const result = await env.DB
+      .prepare(
+        "INSERT INTO notes (title, content, note_date) VALUES (?, ?, ?)",
+      )
+      .bind(title, content, noteDate)
+      .run();
+
+    return Response.json(
+      { ok: true, id: result.meta.last_row_id },
+      { status: 201, headers: { "Cache-Control": "no-store" } },
+    );
+  } catch {
+    return Response.json(
+      { error: "Could not save note" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+}
+
 if (url.pathname === "/api/summary" && request.method === "GET") {
   const requestedMonth = url.searchParams.get("month");
   const month = requestedMonth ?? new Date().toISOString().slice(0, 7);
