@@ -33,6 +33,29 @@ function isAuthorized(request, expectedPassword) {
   }
 }
 
+function getPagination(url) {
+  const limitValue = url.searchParams.get("limit") ?? "100";
+  const offsetValue = url.searchParams.get("offset") ?? "0";
+
+  if (!/^\d+$/.test(limitValue) || !/^\d+$/.test(offsetValue)) {
+    return null;
+  }
+
+  const limit = Number(limitValue);
+  const offset = Number(offsetValue);
+
+  if (
+    !Number.isSafeInteger(limit) ||
+    limit < 1 ||
+    limit > 100 ||
+    !Number.isSafeInteger(offset)
+  ) {
+    return null;
+  }
+
+  return { limit, offset };
+}
+
 export default {
   async fetch(request, env) {
     if (!env.APP_PASSWORD) {
@@ -54,11 +77,43 @@ export default {
 const url = new URL(request.url);
 
 if (url.pathname === "/api/transactions" && request.method === "GET") {
+  const pagination = getPagination(url);
+  if (!pagination) {
+    return Response.json(
+      { error: "Invalid pagination parameters" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  const month = url.searchParams.get("month");
+  let query =
+    "SELECT id, type, amount, category, transaction_date, note, created_at FROM transactions";
+  const bindings = [];
+
+  if (month !== null) {
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+      return Response.json(
+        { error: "Month must use YYYY-MM format" },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const [year, monthNumber] = month.split("-").map(Number);
+    const startDate = `${month}-01`;
+    const endDate = new Date(Date.UTC(year, monthNumber, 1))
+      .toISOString()
+      .slice(0, 10);
+    query += " WHERE transaction_date >= ? AND transaction_date < ?";
+    bindings.push(startDate, endDate);
+  }
+
+  query += " ORDER BY transaction_date DESC, id DESC LIMIT ? OFFSET ?";
+  bindings.push(pagination.limit, pagination.offset);
+
   try {
     const { results } = await env.DB
-      .prepare(
-        "SELECT id, type, amount, category, transaction_date, note, created_at FROM transactions ORDER BY transaction_date DESC, id DESC LIMIT 100",
-      )
+      .prepare(query)
+      .bind(...bindings)
       .all();
 
     return Response.json(results, {
@@ -230,11 +285,20 @@ if (transactionIdMatch && ["PUT", "DELETE"].includes(request.method)) {
 }
 
 if (url.pathname === "/api/notes" && request.method === "GET") {
+  const pagination = getPagination(url);
+  if (!pagination) {
+    return Response.json(
+      { error: "Invalid pagination parameters" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
   try {
     const { results } = await env.DB
       .prepare(
-        "SELECT id, title, content, note_date, created_at FROM notes ORDER BY note_date DESC, id DESC LIMIT 100",
+        "SELECT id, title, content, note_date, created_at FROM notes ORDER BY note_date DESC, id DESC LIMIT ? OFFSET ?",
       )
+      .bind(pagination.limit, pagination.offset)
       .all();
 
     return Response.json(results, {

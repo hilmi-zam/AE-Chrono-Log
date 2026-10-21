@@ -16,6 +16,10 @@ const currency = new Intl.NumberFormat('id-ID', {
   currency: 'IDR',
   maximumFractionDigits: 0,
 })
+const transactionCategories = {
+  income: ['Gaji', 'Bonus', 'Usaha', 'Investasi', 'Hadiah', 'Lainnya'],
+  expense: ['Makanan', 'Transportasi', 'Belanja', 'Tagihan', 'Kesehatan', 'Pendidikan', 'Hiburan', 'Rumah Tangga', 'Lainnya'],
+}
 
 function escapeHTML(value = '') {
   return String(value).replace(/[&<>"']/g, (character) => ({
@@ -25,6 +29,17 @@ function escapeHTML(value = '') {
     '"': '&quot;',
     "'": '&#39;',
   })[character])
+}
+
+function categoryOptions(type, selected = '') {
+  const categories = [...transactionCategories[type]]
+  const hasExistingCategory = selected && !categories.includes(selected)
+  if (hasExistingCategory) categories.unshift(selected)
+
+  return categories.map((category) => `
+    <option value="${escapeHTML(category)}" ${category === selected ? 'selected' : ''}>
+      ${escapeHTML(category)}${hasExistingCategory && category === selected ? ' (kategori lama)' : ''}
+    </option>`).join('')
 }
 
 function basicAuthorization(password) {
@@ -98,7 +113,10 @@ function renderApp() {
       <main class="main-content">
         <header class="topbar">
           <div><p class="eyebrow">PERSONAL DESK <span>/</span> ${state.page === 'finance' ? 'KEUANGAN' : 'CATATAN'}</p><h1>${state.page === 'finance' ? 'Keuangan' : 'Catatan'}</h1></div>
-          <button class="button button-quiet refresh-button" type="button" data-action="refresh"><span aria-hidden="true">↻</span> Perbarui</button>
+            <div class="topbar-actions">
+              <button class="button button-quiet export-button" type="button" data-action="export" data-kind="${state.page === 'finance' ? 'transactions' : 'notes'}"><span aria-hidden="true">↓</span> Ekspor CSV</button>
+              <button class="button button-quiet refresh-button" type="button" data-action="refresh"><span aria-hidden="true">↻</span> Perbarui</button>
+            </div>
         </header>
         <div id="notice" class="notice" role="status" hidden></div>
         <section class="page-content">${activePage}</section>
@@ -138,9 +156,9 @@ function renderFinance() {
     <section class="content-section entry-section">
       <div class="section-heading"><div><span class="section-kicker">CATAT BARU</span><h2>Tambah transaksi</h2></div></div>
       <form id="transaction-form" class="entry-grid">
-        <label>Jenis<select name="type"><option value="expense">Pengeluaran</option><option value="income">Pemasukan</option></select></label>
+        <label>Jenis<select id="transaction-type" name="type"><option value="expense">Pengeluaran</option><option value="income">Pemasukan</option></select></label>
         <label>Nominal (Rp)<input name="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="150000" required /></label>
-        <label>Kategori<input name="category" maxlength="100" placeholder="Makan, transportasi…" required /></label>
+        <label>Kategori<select id="transaction-category" name="category" required>${categoryOptions('expense')}</select></label>
         <label>Tanggal<input name="transaction_date" type="date" value="${today()}" required /></label>
         <label class="wide-field">Catatan singkat<input name="note" maxlength="2000" placeholder="Opsional" /></label>
         <div class="form-actions"><button class="button button-dark" type="submit">Simpan transaksi <span aria-hidden="true">＋</span></button></div>
@@ -191,7 +209,7 @@ function showNotice(message, isError = false) {
 async function loadData() {
   const [summary, transactions, notes] = await Promise.all([
     api(`/api/summary?month=${encodeURIComponent(state.month)}`),
-    api('/api/transactions'),
+    loadAllPages('transactions', { month: state.month }),
     api('/api/notes'),
   ])
   state.summary = summary
@@ -213,9 +231,9 @@ function openEditDialog(kind, id) {
   if (kind === 'transaction') {
     document.querySelector('#edit-dialog-title').textContent = 'Ubah transaksi'
     form.innerHTML = `
-      <label>Jenis<select name="type"><option value="expense" ${item.type === 'expense' ? 'selected' : ''}>Pengeluaran</option><option value="income" ${item.type === 'income' ? 'selected' : ''}>Pemasukan</option></select></label>
+      <label>Jenis<select id="edit-transaction-type" name="type"><option value="expense" ${item.type === 'expense' ? 'selected' : ''}>Pengeluaran</option><option value="income" ${item.type === 'income' ? 'selected' : ''}>Pemasukan</option></select></label>
       <label>Nominal (Rp)<input name="amount" type="number" min="1" step="1" value="${item.amount}" required /></label>
-      <label>Kategori<input name="category" maxlength="100" value="${escapeHTML(item.category)}" required /></label>
+      <label>Kategori<select id="edit-transaction-category" name="category" required>${categoryOptions(item.type, item.category)}</select></label>
       <label>Tanggal<input name="transaction_date" type="date" value="${escapeHTML(item.transaction_date)}" required /></label>
       <label>Catatan singkat<input name="note" maxlength="2000" value="${escapeHTML(item.note || '')}" /></label>
       <div class="dialog-actions"><button class="button button-quiet" type="button" data-action="close-dialog">Batal</button><button class="button button-dark" type="submit">Simpan perubahan</button></div>`
@@ -229,6 +247,74 @@ function openEditDialog(kind, id) {
   }
 
   dialog.showModal()
+}
+
+async function loadAllPages(resource, filters = {}) {
+  const pageSize = 100
+  const records = []
+  const seenPages = new Set()
+  let offset = 0
+
+  while (true) {
+    const query = new URLSearchParams({
+      ...filters,
+      limit: String(pageSize),
+      offset: String(offset),
+    })
+    const page = await api(`/api/${resource}?${query}`)
+    if (!Array.isArray(page)) {
+      throw new Error('Worker mengembalikan format data ekspor yang tidak dikenali.')
+    }
+    const pageKey = page.map((record) => record.id).join(',')
+    if (page.length > 0 && seenPages.has(pageKey)) {
+      throw new Error('Worker belum mendukung ekspor bertahap. Perbarui Worker terlebih dahulu.')
+    }
+    seenPages.add(pageKey)
+    records.push(...page)
+    if (page.length < pageSize) return records
+    offset += page.length
+  }
+}
+
+function csvCell(value) {
+  let text = value == null ? '' : String(value)
+  if (/^[\u0000-\u0020]*[=+\-@]/.test(text)) text = `'${text}`
+  return `"${text.replaceAll('"', '""')}"`
+}
+
+function downloadCsv(kind, records) {
+  const columns = kind === 'transactions'
+    ? [
+        ['ID', 'id'],
+        ['Jenis', 'type'],
+        ['Nominal (Rp)', 'amount'],
+        ['Kategori', 'category'],
+        ['Tanggal', 'transaction_date'],
+        ['Catatan', 'note'],
+        ['Dibuat pada', 'created_at'],
+      ]
+    : [
+        ['ID', 'id'],
+        ['Judul', 'title'],
+        ['Isi', 'content'],
+        ['Tanggal', 'note_date'],
+        ['Dibuat pada', 'created_at'],
+      ]
+  const rows = [
+    columns.map(([label]) => csvCell(label)),
+    ...records.map((record) => columns.map(([, key]) => csvCell(record[key]))),
+  ]
+  const csv = `\uFEFF${rows.map((row) => row.join(',')).join('\r\n')}`
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const downloadUrl = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  const date = today()
+  link.href = downloadUrl
+  link.download = `ae-chrono-log-${kind}-${date}.csv`
+  document.body.append(link)
+  link.click()
+  link.remove()
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
 }
 
 app.addEventListener('submit', async (event) => {
@@ -277,6 +363,7 @@ app.addEventListener('submit', async (event) => {
     values.note = values.note.trim() || null
     try {
       await api('/api/transactions', { method: 'POST', body: JSON.stringify(values) })
+      state.month = values.transaction_date.slice(0, 7)
       await loadData()
       showNotice('Transaksi berhasil disimpan.')
     } catch (error) {
@@ -353,14 +440,38 @@ app.addEventListener('click', async (event) => {
       showNotice(error.message, true)
     }
   }
+
+  if (actionButton.dataset.action === 'export') {
+    const kind = actionButton.dataset.kind
+    actionButton.disabled = true
+    try {
+      const records = await loadAllPages(kind)
+      downloadCsv(kind, records)
+      showNotice(`CSV berhasil dibuat: ${records.length} baris.`)
+    } catch (error) {
+      showNotice(error.message, true)
+    } finally {
+      actionButton.disabled = false
+    }
+  }
 })
 
 app.addEventListener('change', async (event) => {
+  if (event.target.id === 'transaction-type') {
+    document.querySelector('#transaction-category').innerHTML = categoryOptions(event.target.value)
+    return
+  }
+
+  if (event.target.id === 'edit-transaction-type') {
+    document.querySelector('#edit-transaction-category').innerHTML = categoryOptions(event.target.value)
+    return
+  }
+
   if (event.target.id !== 'month-picker') return
+  if (!event.target.value) return
   state.month = event.target.value
   try {
-    state.summary = await api(`/api/summary?month=${encodeURIComponent(state.month)}`)
-    renderApp()
+    await loadData()
   } catch (error) {
     showNotice(error.message, true)
   }
