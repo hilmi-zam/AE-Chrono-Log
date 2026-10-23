@@ -293,12 +293,33 @@ if (url.pathname === "/api/notes" && request.method === "GET") {
     );
   }
 
+  const searchValue = url.searchParams.get("q");
+  const search = searchValue === null ? "" : searchValue.trim();
+
+  if (search.length > 100) {
+    return Response.json(
+      { error: "Search query must be at most 100 characters" },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
+  let query =
+    "SELECT id, title, content, note_date, created_at FROM notes";
+  const bindings = [];
+
+  if (search.length > 0) {
+    query +=
+      " WHERE instr(lower(title), lower(?)) > 0 OR instr(lower(content), lower(?)) > 0";
+    bindings.push(search, search);
+  }
+
+  query += " ORDER BY note_date DESC, id DESC LIMIT ? OFFSET ?";
+  bindings.push(pagination.limit, pagination.offset);
+
   try {
     const { results } = await env.DB
-      .prepare(
-        "SELECT id, title, content, note_date, created_at FROM notes ORDER BY note_date DESC, id DESC LIMIT ? OFFSET ?",
-      )
-      .bind(pagination.limit, pagination.offset)
+      .prepare(query)
+      .bind(...bindings)
       .all();
 
     return Response.json(results, {

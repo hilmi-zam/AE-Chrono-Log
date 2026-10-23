@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output (dashboard)
+dashboard/dist/
+
+# Environment dan rahasia (jangan commit)
+.env
+.dev.vars
+
+# Wrangler / Cloudflare
+.wrangler/
+
+# Graphify output (hasil analisis, tidak perlu dikomit)
+graphify-out/
+
+# Ekspor CSV (berisi data pengguna, simpan di luar repo)
+*.csv
+
+# File sistem operasi
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dokumen proyek (disimpan lokal, tidak diunggah ke repository)
+/PROJECT_STATUS.md
+/PROJECT_GUIDE.md
+/PROJECT_RULES.md   

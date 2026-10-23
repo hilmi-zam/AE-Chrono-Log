@@ -1,7 +1,5 @@
 # Æ Chrono Log
 
-Dashboard pribadi untuk mencatat transaksi keuangan dan catatan kuliah atau rapat. Aplikasi menggunakan Cloudflare Worker sebagai API, Cloudflare D1 sebagai database, dan dashboard web berbasis Vite.
-
 > **Status: Dalam pengembangan.** Dashboard saat ini dijalankan secara lokal. Worker produksi sudah tersedia, tetapi setiap perubahan kode Worker tetap harus di-deploy oleh pemilik akun Cloudflare. Jangan gunakan data pribadi rutin sebelum backup dan perlindungan akses ditinjau.
 
 ## Fitur
@@ -10,17 +8,19 @@ Dashboard pribadi untuk mencatat transaksi keuangan dan catatan kuliah atau rapa
 - Mengubah dan menghapus transaksi; penghapusan meminta konfirmasi.
 - Memilih bulan untuk melihat transaksi dan ringkasan bulan tersebut.
 - Melihat total pemasukan, pengeluaran, selisih, dan rincian kategori.
-- Mengekspor transaksi atau catatan ke CSV.
+- Mengekspor tampilan yang sedang difilter atau seluruh data ke CSV.
 - Menyimpan, membuka, mengubah, dan menghapus catatan.
+- Mencari catatan berdasarkan judul dan isi.
+- Memuat catatan berikutnya per 100 baris tanpa mengunduh seluruh daftar sekaligus.
 - Melindungi permintaan API dengan HTTP Basic Authentication.
 
 ## Teknologi
 
-| Bagian | Teknologi |
-| --- | --- |
+| Bagian    | Teknologi                           |
+| --------- | ----------------------------------- |
 | Dashboard | Vite dan JavaScript tanpa framework |
-| API | Cloudflare Workers |
-| Database | Cloudflare D1 |
+| API       | Cloudflare Workers                  |
+| Database  | Cloudflare D1                       |
 
 ## Menjalankan Dashboard Lokal
 
@@ -39,7 +39,7 @@ npm --prefix .\dashboard install
 npm --prefix .\dashboard run dev -- --host 127.0.0.1
 ```
 
-Buka alamat yang ditampilkan Vite, biasanya <http://127.0.0.1:5173/>. Masukkan password Worker pada layar login. Terminal harus tetap terbuka selama dashboard digunakan; tekan `Ctrl+C` untuk menghentikan server.
+Buka alamat yang ditampilkan Vite, biasanya [http://127.0.0.1:5173/](http://127.0.0.1:5173/). Masukkan password Worker pada layar login. Terminal harus tetap terbuka selama dashboard digunakan; tekan `Ctrl+C` untuk menghentikan server.
 
 Dashboard menggunakan proxy pengembangan yang diatur di `dashboard/vite.config.js` untuk meneruskan permintaan `/api` ke Worker. Proxy ini hanya untuk pengembangan lokal dan bukan konfigurasi hosting produksi.
 
@@ -57,21 +57,22 @@ Kode Worker berada di `worker.js`. Database D1 yang digunakan bernama `ae-chrono
 
 Endpoint API berikut memerlukan autentikasi:
 
-| Metode | Endpoint | Fungsi |
-| --- | --- | --- |
-| `GET` | `/api/check-db` | Memeriksa tabel yang tersedia |
-| `GET` | `/api/transactions` | Membaca transaksi terbaru |
-| `GET` | `/api/transactions?month=YYYY-MM` | Membaca transaksi untuk bulan tertentu |
-| `POST` | `/api/transactions` | Menambahkan transaksi |
-| `PUT` | `/api/transactions/:id` | Mengubah transaksi |
-| `DELETE` | `/api/transactions/:id` | Menghapus transaksi |
-| `GET` | `/api/notes` | Membaca catatan |
-| `POST` | `/api/notes` | Menambahkan catatan |
-| `PUT` | `/api/notes/:id` | Mengubah catatan |
-| `DELETE` | `/api/notes/:id` | Menghapus catatan |
-| `GET` | `/api/summary?month=YYYY-MM` | Menghitung ringkasan bulanan dan kategori |
+| Metode     | Endpoint                            | Fungsi                                    |
+| ---------- | ----------------------------------- | ----------------------------------------- |
+| `GET`    | `/api/check-db`                   | Memeriksa tabel yang tersedia             |
+| `GET`    | `/api/transactions`               | Membaca transaksi terbaru                 |
+| `GET`    | `/api/transactions?month=YYYY-MM` | Membaca transaksi untuk bulan tertentu    |
+| `POST`   | `/api/transactions`               | Menambahkan transaksi                     |
+| `PUT`    | `/api/transactions/:id`           | Mengubah transaksi                        |
+| `DELETE` | `/api/transactions/:id`           | Menghapus transaksi                       |
+| `GET`    | `/api/notes`                      | Membaca catatan                           |
+| `GET`    | `/api/notes?q=kata`               | Mencari catatan berdasarkan judul dan isi |
+| `POST`   | `/api/notes`                      | Menambahkan catatan                       |
+| `PUT`    | `/api/notes/:id`                  | Mengubah catatan                          |
+| `DELETE` | `/api/notes/:id`                  | Menghapus catatan                         |
+| `GET`    | `/api/summary?month=YYYY-MM`      | Menghitung ringkasan bulanan dan kategori |
 
-Endpoint daftar transaksi dan catatan mendukung `limit` hingga 100 dan `offset` untuk mengambil halaman berikutnya. Pengambilan banyak halaman dan ekspor dengan lebih dari 100 baris belum diverifikasi dengan kumpulan data sebesar itu.
+Endpoint daftar transaksi dan catatan mendukung `limit` hingga 100 dan `offset` untuk mengambil halaman berikutnya. Endpoint catatan juga menerima `q` (maksimal 100 karakter) untuk mencari pada judul dan isi; karakter `%`, `_`, dan kutip diperlakukan sebagai teks biasa. Pengambilan banyak halaman dan ekspor dengan lebih dari 100 baris belum diverifikasi dengan kumpulan data sebesar itu.
 
 ## Memperbarui Worker
 
@@ -97,8 +98,9 @@ Deploy mengganti kode Worker yang sedang aktif. Jangan melanjutkan jika nama bin
 ## Status dan Pekerjaan Berikutnya
 
 - Filter bulan dan ekspor CSV transaksi/catatan telah dicoba pengguna.
+- Pencarian catatan telah di-deploy dan pengguna melaporkan hasilnya berhasil.
 - Dropdown kategori sudah dibuat secara lokal; interaksi pilihan belum dikonfirmasi pengguna.
-- Pencarian catatan belum dibuat.
+- Perbaikan frontend berikut masih lokal dan belum diuji pengguna: tanggal/bulan mengikuti waktu lokal, tombol "Muat 100 catatan lagi", dua tombol ekspor (tampilan/semua), pencegahan kirim ganda, status koneksi, dan pemisahan pemuatan data per halaman.
 - `schema.sql` belum tersedia sebagai skema resmi proyek.
 - Dashboard belum di-host sebagai situs publik. Proxy Vite hanya untuk pengembangan lokal.
 - Pengujian ekspor dengan lebih dari 100 baris belum dilakukan.

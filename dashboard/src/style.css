@@ -37,6 +37,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .nav-symbol { width: 19px; color: #b5c8bd; font-size: 18px; text-align: center; }
 .sidebar-bottom { display: flex; align-items: center; gap: 8px; margin-top: auto; padding: 13px 3px 0; border-top: 1px solid #455752; color: #c4d0c9; font-size: 12px; }
 .connection-dot { width: 7px; height: 7px; border-radius: 50%; background: #8cc4a4; box-shadow: 0 0 0 3px #344f43; }
+.connection-offline { background: #d08a6f; box-shadow: 0 0 0 3px #4a3a34; }
 .icon-button { margin-left: auto; border: 0; background: transparent; color: #d5ddd7; font-size: 18px; cursor: pointer; }
 .main-content { min-height: 100vh; margin-left: 238px; }
 .topbar { display: flex; min-height: 132px; align-items: center; justify-content: space-between; padding: 24px clamp(24px, 4.3vw, 68px); border-bottom: 1px solid var(--line); background: #fbfaf6; }
@@ -53,7 +54,7 @@ h1, h2, h3, p { margin-top: 0; }
 .button-quiet { border-color: #dfe3db; background: transparent; color: #44534c; }
 .button-quiet:hover { background: #f0f2ec; }
 .page-content { width: min(100%, 1460px); margin: 0 auto; padding: 28px clamp(24px, 4.3vw, 68px) 60px; }
-.period-row, .notes-intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 17px; }
+.period-row, .notes-intro { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 17px; }
 .muted { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
 .month-picker { display: flex; align-items: center; gap: 11px; color: #68766e; font-size: 12px; }
 input, select, textarea { width: 100%; min-height: 41px; border: 1px solid #dfe2d9; border-radius: 4px; padding: 9px 11px; background: #fff; color: var(--ink); }
@@ -101,6 +102,9 @@ td { border-top: 1px solid #eceee8; padding: 11px 9px; font-size: 12px; }
 .wide-field { grid-column: span 2; }
 .form-actions { display: flex; align-items: end; }
 .notes-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(290px, .85fr); gap: 14px; align-items: start; }
+.notes-tools { display: flex; flex-wrap: wrap; align-items: end; justify-content: flex-end; gap: 14px; }
+.note-search { display: grid; min-width: 0; gap: 5px; color: #68766e; font-size: 11px; font-weight: 600; }
+.note-search input { width: 230px; min-height: 37px; padding: 7px 9px; font-size: 13px; font-weight: 400; }
 .note-list { display: grid; }
 .note-item { padding: 14px 0; border-top: 1px solid #eceee8; }
 .note-item-top { display: flex; justify-content: space-between; color: #8b948c; font-size: 10px; }
@@ -117,6 +121,7 @@ td { border-top: 1px solid #eceee8; padding: 11px 9px; font-size: 12px; }
 .text-action:hover { text-decoration: underline; text-underline-offset: 3px; }
 .delete-action { color: #a75c45; }
 .note-actions { display: flex; gap: 8px; margin: 9px -5px -3px; }
+.note-more { margin-top: 14px; text-align: center; }
 .edit-dialog { width: min(94vw, 470px); max-height: 90dvh; overflow: auto; border: 1px solid #d9ded5; border-radius: 6px; padding: 0; background: var(--paper); color: var(--ink); box-shadow: 0 22px 70px rgba(20, 37, 31, .2); }
 .edit-dialog::backdrop { background: rgba(24, 39, 34, .46); backdrop-filter: blur(2px); }
 .dialog-heading { display: flex; align-items: center; justify-content: space-between; padding: 18px 21px; border-bottom: 1px solid var(--line); }
@@ -161,10 +166,15 @@ td { border-top: 1px solid #eceee8; padding: 11px 9px; font-size: 12px; }
   .nav-item { min-height: 37px; gap: 6px; padding: 0 9px; font-size: 12px; }
   .nav-symbol { width: auto; font-size: 15px; }
   .main-content { margin-left: 0; }
-  .topbar { min-height: 105px; padding: 18px; }
+  .topbar { min-height: 105px; flex-wrap: wrap; gap: 12px; padding: 18px; }
   .topbar h1 { font-size: 29px; }
+  .topbar-actions { width: 100%; justify-content: flex-start; }
   .page-content { padding: 22px 16px 42px; }
   .finance-layout, .notes-layout { grid-template-columns: 1fr; }
+  .notes-intro { flex-wrap: wrap; gap: 14px; }
+  .notes-tools { width: 100%; justify-content: space-between; }
+  .note-search { flex: 1; }
+  .note-search input { width: 100%; }
   .summary-grid { gap: 8px; }
   .summary-card { min-height: 119px; padding: 13px 11px; }
   .summary-card-top { font-size: 10px; }

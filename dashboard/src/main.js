@@ -1,16 +1,31 @@
 import './style.css'
 
 const app = document.querySelector('#app')
+
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const state = {
   authorization: '',
-  month: new Date().toISOString().slice(0, 7),
+  connection: 'online',
+  month: localDateKey().slice(0, 7),
+  noteHasMore: false,
+  noteQuery: '',
   notes: [],
   page: 'finance',
   summary: null,
   transactions: [],
 }
 
-const today = () => new Date().toISOString().slice(0, 10)
+const today = () => localDateKey()
+const NOTE_PAGE_SIZE = 100
+let noteSearchTimer = null
+let notesRequestId = 0
+let financeRequestId = 0
 const currency = new Intl.NumberFormat('id-ID', {
   style: 'currency',
   currency: 'IDR',
@@ -47,24 +62,63 @@ function basicAuthorization(password) {
   return `Basic ${btoa(String.fromCharCode(...bytes))}`
 }
 
-async function api(path, options = {}) {
-  const response = await fetch(path, {
-    ...options,
-    headers: {
-      Authorization: state.authorization,
-      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-      ...options.headers,
-    },
-  })
+class ApiError extends Error {
+  constructor(message, status = 0) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+  }
+}
 
-  const payload = await response.json().catch(() => ({}))
+function friendlyError(status) {
+  if (status === 400) return 'Data yang dikirim tidak valid. Periksa isian lalu coba lagi.'
+  if (status === 401) return 'Password tidak cocok atau sesi berakhir.'
+  if (status === 404) return 'Data tidak ditemukan. Mungkin sudah dihapus.'
+  if (status >= 500) return 'Worker gagal memproses permintaan. Coba lagi sebentar lagi.'
+  return 'Permintaan gagal. Coba lagi.'
+}
+
+function setConnection(offline) {
+  state.connection = offline ? 'offline' : 'online'
+  const dot = document.querySelector('.connection-dot')
+  const label = document.querySelector('#connection-label')
+  if (dot) dot.classList.toggle('connection-offline', offline)
+  if (label) label.textContent = offline ? 'Worker tidak terjangkau' : 'Worker terhubung'
+}
+
+async function api(path, options = {}) {
+  let response
+
+  try {
+    response = await fetch(path, {
+      ...options,
+      headers: {
+        Authorization: state.authorization,
+        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...options.headers,
+      },
+    })
+  } catch {
+    setConnection(true)
+    throw new ApiError('Tidak dapat menghubungi Worker. Periksa koneksi atau server.')
+  }
+
   if (!response.ok) {
     if (response.status === 401) {
       state.authorization = ''
+      clearTimeout(noteSearchTimer)
+      notesRequestId += 1
       renderLogin('Sesi berakhir. Masukkan password Worker lagi.')
     }
-    throw new Error(payload.error || `Permintaan gagal (${response.status})`)
+    throw new ApiError(friendlyError(response.status), response.status)
   }
+
+  const payload = await response.json().catch(() => null)
+  if (payload === null) {
+    throw new ApiError('Worker mengembalikan format data yang tidak dikenali.')
+  }
+
+  setConnection(false)
   return payload
 }
 
@@ -106,7 +160,7 @@ function renderApp() {
           <button class="nav-item ${state.page === 'notes' ? 'active' : ''}" data-page="notes"><span class="nav-symbol">▤</span>Catatan</button>
         </nav>
         <div class="sidebar-bottom">
-          <span class="connection-dot"></span><span>Worker terhubung</span>
+          <span class="connection-dot${state.connection === 'offline' ? ' connection-offline' : ''}"></span><span id="connection-label">${state.connection === 'offline' ? 'Worker tidak terjangkau' : 'Worker terhubung'}</span>
           <button class="icon-button logout-button" type="button" data-action="logout" aria-label="Keluar" title="Keluar">↗</button>
         </div>
       </aside>
@@ -114,7 +168,8 @@ function renderApp() {
         <header class="topbar">
           <div><p class="eyebrow">PERSONAL DESK <span>/</span> ${state.page === 'finance' ? 'KEUANGAN' : 'CATATAN'}</p><h1>${state.page === 'finance' ? 'Keuangan' : 'Catatan'}</h1></div>
             <div class="topbar-actions">
-              <button class="button button-quiet export-button" type="button" data-action="export" data-kind="${state.page === 'finance' ? 'transactions' : 'notes'}"><span aria-hidden="true">↓</span> Ekspor CSV</button>
+              <button class="button button-quiet export-button" type="button" data-action="export" data-scope="view" data-kind="${state.page === 'finance' ? 'transactions' : 'notes'}"><span aria-hidden="true">↓</span> Ekspor tampilan</button>
+              <button class="button button-quiet export-button" type="button" data-action="export" data-scope="all" data-kind="${state.page === 'finance' ? 'transactions' : 'notes'}"><span aria-hidden="true">↓</span> Ekspor semua</button>
               <button class="button button-quiet refresh-button" type="button" data-action="refresh"><span aria-hidden="true">↻</span> Perbarui</button>
             </div>
         </header>
@@ -176,12 +231,39 @@ function transactionRow(transaction) {
   return `<tr><td><span class="transaction-name">${escapeHTML(transaction.note || (isIncome ? 'Pemasukan' : 'Pengeluaran'))}</span><span class="transaction-id">ID ${transaction.id}</span></td><td><span class="tag">${escapeHTML(transaction.category)}</span></td><td class="date-cell">${date}</td><td class="amount-cell ${isIncome ? 'positive' : 'negative'}">${isIncome ? '+' : '−'}${currency.format(transaction.amount)}</td><td class="row-actions"><button class="text-action" type="button" data-action="edit" data-kind="transaction" data-id="${transaction.id}">Ubah</button><button class="text-action delete-action" type="button" data-action="delete" data-kind="transaction" data-id="${transaction.id}">Hapus</button></td></tr>`
 }
 
+function noteCountText() {
+  if (state.noteQuery) return `${state.notes.length} hasil`
+  return `${state.notes.length} catatan dimuat`
+}
+
+function noteResultsHTML() {
+  if (!state.notes.length) {
+    return emptyState(
+      state.noteQuery
+        ? `Tidak ada catatan yang cocok dengan "${escapeHTML(state.noteQuery)}".`
+        : 'Catatan yang disimpan akan muncul di sini.'
+    )
+  }
+
+  const list = `<div class="note-list">${state.notes.map((note) => `<article class="note-item"><div class="note-item-top"><span class="note-date">${new Date(`${note.note_date}T00:00:00`).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</span><span class="note-id">#${note.id}</span></div><h3>${escapeHTML(note.title)}</h3><p>${escapeHTML(note.content)}</p><div class="note-actions"><button class="text-action" type="button" data-action="edit" data-kind="note" data-id="${note.id}">Ubah</button><button class="text-action delete-action" type="button" data-action="delete" data-kind="note" data-id="${note.id}">Hapus</button></div></article>`).join('')}</div>`
+  const more = !state.noteQuery && state.noteHasMore
+    ? `<div class="note-more"><button class="button button-quiet" type="button" data-action="load-more-notes">Muat ${NOTE_PAGE_SIZE} catatan lagi</button></div>`
+    : ''
+
+  return `${list}${more}`
+}
+
 function renderNotes() {
   return `
-    <div class="notes-intro"><div><span class="section-kicker">ARSIP PRIBADI</span><p class="muted">Catatan kuliah, rapat, dan hal yang perlu diingat.</p></div><span class="count-label">${state.notes.length} catatan</span></div>
+    <div class="notes-intro"><div><span class="section-kicker">ARSIP PRIBADI</span><p class="muted">Catatan kuliah, rapat, dan hal yang perlu diingat.</p></div>
+      <div class="notes-tools">
+        <label class="note-search">Cari<input id="note-search" type="search" maxlength="100" value="${escapeHTML(state.noteQuery)}" placeholder="Judul atau isi catatan…" autocomplete="off" /></label>
+        <span id="note-count" class="count-label" aria-live="polite">${noteCountText()}</span>
+      </div>
+    </div>
     <div class="notes-layout">
       <section class="content-section note-list-section"><div class="section-heading"><div><span class="section-kicker">TERBARU</span><h2>Daftar catatan</h2></div></div>
-        ${state.notes.length ? `<div class="note-list">${state.notes.map((note) => `<article class="note-item"><div class="note-item-top"><span class="note-date">${new Date(`${note.note_date}T00:00:00`).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</span><span class="note-id">#${note.id}</span></div><h3>${escapeHTML(note.title)}</h3><p>${escapeHTML(note.content)}</p><div class="note-actions"><button class="text-action" type="button" data-action="edit" data-kind="note" data-id="${note.id}">Ubah</button><button class="text-action delete-action" type="button" data-action="delete" data-kind="note" data-id="${note.id}">Hapus</button></div></article>`).join('')}</div>` : emptyState('Catatan yang disimpan akan muncul di sini.')}
+        <div id="note-results">${noteResultsHTML()}</div>
       </section>
       <section class="content-section note-form-section"><div class="section-heading"><div><span class="section-kicker">CATAT BARU</span><h2>Tulis catatan</h2></div></div>
         <form id="note-form" class="stack-form note-form">
@@ -206,16 +288,107 @@ function showNotice(message, isError = false) {
   notice.textContent = message
 }
 
-async function loadData() {
-  const [summary, transactions, notes] = await Promise.all([
+async function loadAllData() {
+  notesRequestId += 1
+  const [summary, transactions, notesPage] = await Promise.all([
     api(`/api/summary?month=${encodeURIComponent(state.month)}`),
     loadAllPages('transactions', { month: state.month }),
-    api('/api/notes'),
+    fetchNotes(),
   ])
   state.summary = summary
   state.transactions = transactions
-  state.notes = notes
+  state.notes = notesPage.notes
+  state.noteHasMore = notesPage.hasMore
   renderApp()
+}
+
+async function loadFinanceData({ render = true } = {}) {
+  const requestId = ++financeRequestId
+  const [summary, transactions] = await Promise.all([
+    api(`/api/summary?month=${encodeURIComponent(state.month)}`),
+    loadAllPages('transactions', { month: state.month }),
+  ])
+  if (requestId !== financeRequestId) return false
+
+  state.summary = summary
+  state.transactions = transactions
+  if (render) renderApp()
+  return true
+}
+
+async function fetchNotes({ append = false } = {}) {
+  if (state.noteQuery) {
+    const notes = await loadAllPages('notes', { q: state.noteQuery })
+    return { notes, hasMore: false }
+  }
+
+  const query = new URLSearchParams({
+    limit: String(NOTE_PAGE_SIZE),
+    offset: String(append ? state.notes.length : 0),
+  })
+  const page = await api(`/api/notes?${query}`)
+  if (!Array.isArray(page)) {
+    throw new ApiError('Format data catatan tidak dikenali.')
+  }
+
+  return {
+    notes: append ? [...state.notes, ...page] : page,
+    hasMore: page.length === NOTE_PAGE_SIZE,
+  }
+}
+
+async function loadNotesData({ append = false, render = true, rethrow = false } = {}) {
+  const requestId = ++notesRequestId
+
+  try {
+    const { notes, hasMore } = await fetchNotes({ append })
+    if (requestId !== notesRequestId) return false
+
+    state.notes = notes
+    state.noteHasMore = hasMore
+    if (render) {
+      renderApp()
+    } else {
+      renderNoteResults()
+    }
+    return true
+  } catch (error) {
+    if (requestId !== notesRequestId) return false
+    if (rethrow) throw error
+    showNotice(error.message, true)
+    return false
+  }
+}
+
+function renderNoteResults() {
+  const results = document.querySelector('#note-results')
+  const count = document.querySelector('#note-count')
+  if (results) results.innerHTML = noteResultsHTML()
+  if (count) count.textContent = noteCountText()
+}
+
+function noteVisibleMessage(id, message) {
+  if (!state.noteQuery) return message
+  return state.notes.some((note) => note.id === id)
+    ? message
+    : `${message} Namun catatan ini tidak cocok dengan pencarian aktif.`
+}
+
+function lockForm(form) {
+  if (form.dataset.busy === 'true') return false
+  form.dataset.busy = 'true'
+  form.querySelectorAll('button[type="submit"]').forEach((button) => {
+    button.disabled = true
+  })
+  return true
+}
+
+function unlockForm(form) {
+  if (!form.isConnected) return
+  delete form.dataset.busy
+  form.querySelectorAll('button[type="submit"]').forEach((button) => {
+    button.disabled = false
+  })
 }
 
 function openEditDialog(kind, id) {
@@ -263,11 +436,11 @@ async function loadAllPages(resource, filters = {}) {
     })
     const page = await api(`/api/${resource}?${query}`)
     if (!Array.isArray(page)) {
-      throw new Error('Worker mengembalikan format data ekspor yang tidak dikenali.')
+      throw new ApiError('Worker mengembalikan format data yang tidak dikenali.')
     }
     const pageKey = page.map((record) => record.id).join(',')
     if (page.length > 0 && seenPages.has(pageKey)) {
-      throw new Error('Worker belum mendukung ekspor bertahap. Perbarui Worker terlebih dahulu.')
+      throw new ApiError('Worker tidak mengembalikan halaman berikutnya. Perbarui Worker terlebih dahulu.')
     }
     seenPages.add(pageKey)
     records.push(...page)
@@ -282,7 +455,7 @@ function csvCell(value) {
   return `"${text.replaceAll('"', '""')}"`
 }
 
-function downloadCsv(kind, records) {
+function downloadCsv(kind, records, scope = 'all') {
   const columns = kind === 'transactions'
     ? [
         ['ID', 'id'],
@@ -310,7 +483,7 @@ function downloadCsv(kind, records) {
   const link = document.createElement('a')
   const date = today()
   link.href = downloadUrl
-  link.download = `ae-chrono-log-${kind}-${date}.csv`
+  link.download = `ae-chrono-log-${kind}-${scope === 'all' ? 'semua' : 'tampilan'}-${date}.csv`
   document.body.append(link)
   link.click()
   link.remove()
@@ -320,66 +493,79 @@ function downloadCsv(kind, records) {
 app.addEventListener('submit', async (event) => {
   event.preventDefault()
   const form = event.target
+  if (!lockForm(form)) return
 
-  if (form.id === 'login-form') {
-    const password = new FormData(form).get('password')
-    state.authorization = basicAuthorization(password)
-    try {
-      await loadData()
-    } catch (error) {
-      state.authorization = ''
-      renderLogin(error.message.includes('401') ? 'Password tidak cocok.' : error.message)
+  try {
+    if (form.id === 'login-form') {
+      const password = new FormData(form).get('password')
+      state.authorization = basicAuthorization(password)
+      try {
+        await loadAllData()
+      } catch (error) {
+        state.authorization = ''
+        renderLogin(error.status === 401 ? 'Password tidak cocok.' : error.message)
+      }
+      return
     }
-    return
-  }
 
-  if (form.id === 'edit-form') {
-    const kind = form.dataset.kind
-    const id = Number(form.dataset.id)
-    const resource = kind === 'transaction' ? 'transactions' : 'notes'
-    const values = Object.fromEntries(new FormData(form))
-    if (kind === 'transaction') {
+    if (form.id === 'edit-form') {
+      const kind = form.dataset.kind
+      const id = Number(form.dataset.id)
+      const resource = kind === 'transaction' ? 'transactions' : 'notes'
+      const values = Object.fromEntries(new FormData(form))
+      if (kind === 'transaction') {
+        values.amount = Number(values.amount)
+        values.note = values.note.trim() || null
+      }
+
+      try {
+        await api(`/api/${resource}/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(values),
+        })
+        document.querySelector('#edit-dialog').close()
+
+        if (kind === 'transaction') {
+          state.month = values.transaction_date.slice(0, 7)
+          await loadFinanceData()
+          showNotice('Transaksi berhasil diubah.')
+        } else {
+          await loadNotesData({ rethrow: true })
+          showNotice(noteVisibleMessage(id, 'Catatan berhasil diubah.'))
+        }
+      } catch (error) {
+        showNotice(error.message, true)
+      }
+      return
+    }
+
+    if (form.id === 'transaction-form') {
+      const values = Object.fromEntries(new FormData(form))
       values.amount = Number(values.amount)
       values.note = values.note.trim() || null
+      try {
+        await api('/api/transactions', { method: 'POST', body: JSON.stringify(values) })
+        state.month = values.transaction_date.slice(0, 7)
+        await loadFinanceData()
+        showNotice('Transaksi berhasil disimpan.')
+      } catch (error) {
+        showNotice(error.message, true)
+      }
+      return
     }
 
-    try {
-      await api(`/api/${resource}/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(values),
-      })
-      document.querySelector('#edit-dialog').close()
-      await loadData()
-      showNotice(kind === 'transaction' ? 'Transaksi berhasil diubah.' : 'Catatan berhasil diubah.')
-    } catch (error) {
-      showNotice(error.message, true)
+    if (form.id === 'note-form') {
+      const values = Object.fromEntries(new FormData(form))
+      try {
+        const result = await api('/api/notes', { method: 'POST', body: JSON.stringify(values) })
+        await loadNotesData({ rethrow: true })
+        showNotice(noteVisibleMessage(result.id, 'Catatan berhasil disimpan.'))
+      } catch (error) {
+        showNotice(error.message, true)
+      }
     }
-    return
-  }
-
-  if (form.id === 'transaction-form') {
-    const values = Object.fromEntries(new FormData(form))
-    values.amount = Number(values.amount)
-    values.note = values.note.trim() || null
-    try {
-      await api('/api/transactions', { method: 'POST', body: JSON.stringify(values) })
-      state.month = values.transaction_date.slice(0, 7)
-      await loadData()
-      showNotice('Transaksi berhasil disimpan.')
-    } catch (error) {
-      showNotice(error.message, true)
-    }
-  }
-
-  if (form.id === 'note-form') {
-    const values = Object.fromEntries(new FormData(form))
-    try {
-      await api('/api/notes', { method: 'POST', body: JSON.stringify(values) })
-      await loadData()
-      showNotice('Catatan berhasil disimpan.')
-    } catch (error) {
-      showNotice(error.message, true)
-    }
+  } finally {
+    unlockForm(form)
   }
 })
 
@@ -395,7 +581,11 @@ app.addEventListener('click', async (event) => {
   if (!actionButton) return
 
   if (actionButton.dataset.action === 'logout') {
+    clearTimeout(noteSearchTimer)
+    notesRequestId += 1
     state.authorization = ''
+    state.noteHasMore = false
+    state.noteQuery = ''
     state.summary = null
     state.transactions = []
     state.notes = []
@@ -423,7 +613,11 @@ app.addEventListener('click', async (event) => {
     if (item && window.confirm(`Hapus ${description}? Tindakan ini tidak dapat dibatalkan.`)) {
       try {
         await api(`/api/${resource}/${id}`, { method: 'DELETE' })
-        await loadData()
+        if (kind === 'transaction') {
+          await loadFinanceData()
+        } else {
+          await loadNotesData({ rethrow: true })
+        }
         showNotice(kind === 'transaction' ? 'Transaksi berhasil dihapus.' : 'Catatan berhasil dihapus.')
       } catch (error) {
         showNotice(error.message, true)
@@ -434,26 +628,63 @@ app.addEventListener('click', async (event) => {
   if (actionButton.dataset.action === 'refresh') {
     actionButton.disabled = true
     try {
-      await loadData()
+      if (state.page === 'finance') {
+        await loadFinanceData()
+      } else {
+        await loadNotesData({ rethrow: true })
+      }
       showNotice('Data berhasil diperbarui.')
-    } catch (error) {
-      showNotice(error.message, true)
-    }
-  }
-
-  if (actionButton.dataset.action === 'export') {
-    const kind = actionButton.dataset.kind
-    actionButton.disabled = true
-    try {
-      const records = await loadAllPages(kind)
-      downloadCsv(kind, records)
-      showNotice(`CSV berhasil dibuat: ${records.length} baris.`)
     } catch (error) {
       showNotice(error.message, true)
     } finally {
       actionButton.disabled = false
     }
   }
+
+  if (actionButton.dataset.action === 'load-more-notes') {
+    actionButton.disabled = true
+    try {
+      await loadNotesData({ append: true, render: false, rethrow: true })
+    } catch (error) {
+      showNotice(error.message, true)
+    } finally {
+      actionButton.disabled = false
+    }
+  }
+
+  if (actionButton.dataset.action === 'export') {
+    const kind = actionButton.dataset.kind
+    const scope = actionButton.dataset.scope === 'all' ? 'all' : 'view'
+    const filters = {}
+
+    if (scope === 'view') {
+      if (kind === 'transactions') {
+        filters.month = state.month
+      } else if (state.noteQuery) {
+        filters.q = state.noteQuery
+      }
+    }
+
+    actionButton.disabled = true
+    try {
+      const records = await loadAllPages(kind, filters)
+      downloadCsv(kind, records, scope)
+      showNotice(`CSV ${scope === 'all' ? 'semua data' : 'tampilan'} berhasil dibuat: ${records.length} baris.`)
+    } catch (error) {
+      showNotice(error.message, true)
+    } finally {
+      actionButton.disabled = false
+    }
+  }
+})
+
+app.addEventListener('input', (event) => {
+  if (event.target.id !== 'note-search') return
+  state.noteQuery = event.target.value.trim()
+  clearTimeout(noteSearchTimer)
+  noteSearchTimer = setTimeout(() => {
+    loadNotesData({ render: false })
+  }, 300)
 })
 
 app.addEventListener('change', async (event) => {
@@ -471,7 +702,7 @@ app.addEventListener('change', async (event) => {
   if (!event.target.value) return
   state.month = event.target.value
   try {
-    await loadData()
+    await loadFinanceData()
   } catch (error) {
     showNotice(error.message, true)
   }
