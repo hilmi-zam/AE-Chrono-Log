@@ -6,6 +6,10 @@ name = "ae-chrono-log"
 main = "worker.js"
 compatibility_date = "2026-11-05"
 
+# Matikan alamat pratinjau (preview URLs); hanya alamat utama yang aktif.
+# Keputusan 2026-11-05. Harus di level atas, bukan di dalam blok [assets].
+preview_urls = false
+
 # Dashboard statis: permintaan selain /api/* dilayani sebagai file statis.
 [assets]
 directory = "./dashboard/dist"
