@@ -56,6 +56,67 @@ function getPagination(url) {
   return { limit, offset };
 }
 
+// Pembatasan percobaan login (rate limit) per IP pada setiap isolasi Worker.
+// Hitungan direset saat Worker di-deploy ulang. Cocok untuk penggunaan pribadi tunggal.
+const loginAttempts = new Map(); // key: IP, value: { count, firstAttempt }
+const MAX_FAILED_LOGIN_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_WINDOW_MS = 15 * 60 * 1000; // 15 menit
+
+function getClientIp(request) {
+  const forwardingIp = request.headers.get("CF-Connecting-IP");
+  if (forwardingIp) return forwardingIp;
+  return "unknown";
+}
+
+function isLoginRateLimited(ip) {
+  const record = loginAttempts.get(ip);
+  if (!record) return false;
+
+  const now = Date.now();
+  if (now - record.firstAttempt > LOGIN_LOCKOUT_WINDOW_MS) {
+    loginAttempts.delete(ip);
+    return false;
+  }
+
+  return record.count >= MAX_FAILED_LOGIN_ATTEMPTS;
+}
+
+function recordFailedLogin(ip) {
+  const now = Date.now();
+  const record = loginAttempts.get(ip);
+  if (!record) {
+    loginAttempts.set(ip, { count: 1, firstAttempt: now });
+  } else {
+    record.count += 1;
+    loginAttempts.set(ip, record);
+  }
+}
+
+function clearLoginAttempts(ip) {
+  loginAttempts.delete(ip);
+}
+
+// CORS: hanya izinkan origin dashboard yang dikonfigurasi melalui secret CORS_ORIGIN.
+// Jika secret tidak diatur, semua origin diterima (perilaku default, cocok untuk pengembangan lokal).
+function corsHeaders(env, origin = "*") {
+  const configured = env && env.CORS_ORIGIN ? String(env.CORS_ORIGIN) : "*";
+  const allowOrigin = configured === "*" ? "*" : origin;
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+    "Access-Control-Max-Age": "86400",
+    "Cache-Control": "no-store",
+  };
+}
+
+function corsJson(env, body, status = 200, extraHeaders = {}) {
+  return Response.json(body, {
+    status,
+    headers: { ...corsHeaders(env), ...extraHeaders },
+  });
+}
+
 export default {
   async fetch(request, env) {
     if (!env.APP_PASSWORD) {
@@ -64,7 +125,23 @@ export default {
       });
     }
 
+    const clientIp = getClientIp(request);
+
+    if (isLoginRateLimited(clientIp)) {
+      return new Response(
+        "Terlalu banyak percobaan login. Coba lagi dalam 15 menit.",
+        {
+          status: 429,
+          headers: {
+            "Retry-After": "900",
+            "Cache-Control": "no-store",
+          },
+        },
+      );
+    }
+
     if (!isAuthorized(request, env.APP_PASSWORD)) {
+      recordFailedLogin(clientIp);
       return new Response("Unauthorized", {
         status: 401,
         headers: {
@@ -73,10 +150,20 @@ export default {
         },
       });
     }
-    
-const url = new URL(request.url);
 
-if (url.pathname === "/api/transactions" && request.method === "GET") {
+    clearLoginAttempts(clientIp);
+
+    const url = new URL(request.url);
+
+    // Handle CORS preflight
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders(env),
+      });
+    }
+
+    if (url.pathname === "/api/transactions" && request.method === "GET") {
   const pagination = getPagination(url);
   if (!pagination) {
     return Response.json(

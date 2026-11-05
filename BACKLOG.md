@@ -16,26 +16,27 @@ Daftar ide dan tugas di luar versi aktif v1.0. Dokumen ini bukan aturan kerja; a
 
 ## Proteksi akses (penting sebelum data pribadi disimpan rutin)
 
-- Pembatasan percobaan login (rate limit) pada Worker, atau minimal catatan risiko dan keputusan pengguna untuk menerimanya.
+- Pembatasan percobaan login (rate limit) pada Worker: **sudah aktif di produksi dan teruji 2026-11-02** (maksimal 5 percobaan gagal per IP dalam 15 menit, lalu `429`). Hitungan per isolasi Worker dan direset saat di-deploy ulang.
 - Review backup dan cara hosting dashboard yang aman.
+- Gunakan password manager (mis. Bitwarden atau KeePassXC) untuk menyimpan `APP_PASSWORD`, kredensial Cloudflare, kode 2FA, dan recovery code; simpan salinan darurat di tempat fisik. Jangan menaruhnya di repo, chat, atau catatan biasa.
 - Jangan simpan password di `localStorage` dalam bentuk yang terbaca orang lain tanpa keterangan risiko.
 
 ## Hosting dan keamanan
 
-- Hosting dashboard sebagai situs publik (saat ini hanya lokal melalui Vite).
-- CORS hanya mengizinkan origin dashboard.
-- Review autentikasi dan konfigurasi frontend production; proxy Vite hanya untuk pengembangan lokal.
-- Domain kustom dan bagian Websites Cloudflare masih kosong (perlu konfirmasi pengguna).
+- Dashboard sudah di-hosting pada Worker yang sama memakai Workers Static Assets (2026-11-05), sehingga API dan halaman berada di satu origin dan CORS terbatas tidak diperlukan.
+- Pertimbangkan `preview_urls = false` bila tidak ingin alamat pratinjau tambahan aktif.
+- Domain kustom dan bagian Websites Cloudflare masih kosong (perlu konfirmasi pengguna). Ini juga solusi jangka panjang bila `*.workers.dev` diblokir DNS penyedia.
+- Siapkan prosedur backup rutin (ekspor CSV berkala) dan simpan di luar repositori.
 
 ## Data besar (indeks / pencarian penuh)
 
-- Saat ini pencarian catatan memuat semua halaman hasil `q` dan memerlukan `limit`/`offset` manual.
+- Pencarian catatan memuat semua halaman hasil `q`; pagination Worker sudah teruji dengan 250 baris tiruan (2026-10-28), tetapi data nyata masih 11 baris.
 - Bila data catatan tumbuh besar, tambahkan indeks atau FTS di D1 untuk pencarian yang lebih cepat.
-- Uji ekspor dengan lebih dari 100 baris pada kumpulan data nyata.
+- Uji ekspor dengan lebih dari 100 baris pada kumpulan data nyata (tingkat Worker sudah teruji dengan D1 tiruan).
 
 ## Skema resmi
 
-- `schema.sql` belum tersedia. Harus dibuat dari DDL asli D1 (`SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name IN ('transactions', 'notes');`). Jangan mengarang.
+- `schema.sql` sudah ada di repositori (sumber: DDL asli D1, 2026-10-23) dan telah dicocokkan dengan D1 produksi pada 2026-11-02: identik, tanpa indeks/trigger tambahan. Jangan mengubah DDL tanpa persetujuan.
 
 ## Catatan
 

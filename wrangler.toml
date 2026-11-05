@@ -1,0 +1,20 @@
+# Konfigurasi deploy Æ Chrono Log.
+# Worker ini menyajikan API (/api/*) dan dashboard hasil build Vite (dashboard/dist).
+# Deploy: npx wrangler deploy (dilakukan pemilik akun setelah `npx wrangler login`).
+
+name = "ae-chrono-log"
+main = "worker.js"
+compatibility_date = "2026-11-05"
+
+# Dashboard statis: permintaan selain /api/* dilayani sebagai file statis.
+[assets]
+directory = "./dashboard/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# Binding database D1. Harus ada agar `env.DB` tetap tersedia setelah deploy.
+[[d1_databases]]
+binding = "DB"
+database_name = "ae-chrono-log-db"
+database_id = "5605d445-6ad6-4aff-bcf8-bd80e7e28dae"
