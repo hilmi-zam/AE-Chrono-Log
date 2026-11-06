@@ -80,10 +80,12 @@ function friendlyError(status) {
 
 function setConnection(offline) {
   state.connection = offline ? 'offline' : 'online'
-  const dot = document.querySelector('.connection-dot')
-  const label = document.querySelector('#connection-label')
-  if (dot) dot.classList.toggle('connection-offline', offline)
-  if (label) label.textContent = offline ? 'Worker tidak terjangkau' : 'Worker terhubung'
+  document.querySelectorAll('.connection-dot').forEach((dot) => {
+    dot.classList.toggle('connection-offline', offline)
+  })
+  document.querySelectorAll('.connection-label').forEach((label) => {
+    label.textContent = offline ? 'Worker tidak terjangkau' : 'Worker terhubung'
+  })
 }
 
 async function api(path, options = {}) {
@@ -128,7 +130,7 @@ function renderLogin(message = '') {
       <section class="login-panel" aria-labelledby="login-title">
         <div class="brand-mark">Æ</div>
         <p class="eyebrow">RUANG PRIBADI</p>
-        <h1 id="login-title">Chrono Log</h1>
+        <h1 id="login-title">Æ Chrono Log</h1>
         <p class="login-copy">Masuk untuk membuka catatan keuangan dan aktivitasmu.</p>
         <form id="login-form" class="stack-form">
           <label for="worker-password">Password Worker</label>
@@ -160,7 +162,7 @@ function renderApp() {
           <button class="nav-item ${state.page === 'notes' ? 'active' : ''}" data-page="notes"><span class="nav-symbol">▤</span>Catatan</button>
         </nav>
         <div class="sidebar-bottom">
-          <span class="connection-dot${state.connection === 'offline' ? ' connection-offline' : ''}"></span><span id="connection-label">${state.connection === 'offline' ? 'Worker tidak terjangkau' : 'Worker terhubung'}</span>
+          <span class="connection-dot${state.connection === 'offline' ? ' connection-offline' : ''}"></span><span class="connection-label">${state.connection === 'offline' ? 'Worker tidak terjangkau' : 'Worker terhubung'}</span>
           <button class="icon-button logout-button" type="button" data-action="logout" aria-label="Keluar" title="Keluar">↗</button>
         </div>
       </aside>
@@ -175,6 +177,18 @@ function renderApp() {
         </header>
         <div id="notice" class="notice" role="status" hidden></div>
         <section class="page-content">${activePage}</section>
+        <footer class="mobile-utilities" aria-label="Kontrol tambahan">
+          <div class="mobile-utility-actions">
+            <button class="button button-quiet export-button" type="button" data-action="export" data-scope="view" data-kind="${state.page === 'finance' ? 'transactions' : 'notes'}"><span aria-hidden="true">↓</span> Ekspor tampilan</button>
+            <button class="button button-quiet export-button" type="button" data-action="export" data-scope="all" data-kind="${state.page === 'finance' ? 'transactions' : 'notes'}"><span aria-hidden="true">↓</span> Ekspor semua</button>
+            <button class="button button-quiet refresh-button" type="button" data-action="refresh"><span aria-hidden="true">↻</span> Perbarui</button>
+          </div>
+          <div class="mobile-utility-status">
+            <span class="connection-dot${state.connection === 'offline' ? ' connection-offline' : ''}"></span>
+            <span class="connection-label">${state.connection === 'offline' ? 'Worker tidak terjangkau' : 'Worker terhubung'}</span>
+            <button class="icon-button logout-button" type="button" data-action="logout" aria-label="Keluar" title="Keluar">↗</button>
+          </div>
+        </footer>
       </main>
       <dialog id="edit-dialog" class="edit-dialog" aria-labelledby="edit-dialog-title">
         <div class="dialog-heading"><h2 id="edit-dialog-title">Ubah data</h2><button class="icon-button dialog-close" type="button" data-action="close-dialog" aria-label="Tutup">×</button></div>
