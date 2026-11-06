@@ -128,7 +128,7 @@ function renderLogin(message = '') {
       <section class="login-panel" aria-labelledby="login-title">
         <div class="brand-mark">Æ</div>
         <p class="eyebrow">RUANG PRIBADI</p>
-        <h1 id="login-title">Chrono Log</h1>
+        <h1 id="login-title">Æ Chrono Log</h1>
         <p class="login-copy">Masuk untuk membuka catatan keuangan dan aktivitasmu.</p>
         <form id="login-form" class="stack-form">
           <label for="worker-password">Password Worker</label>
