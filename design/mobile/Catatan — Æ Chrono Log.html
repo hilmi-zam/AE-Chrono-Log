@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container-highest": "#e3e3de", "surface-dim": "#dadad5", "on-primary-fixed-variant": "#474746", "on-tertiary-fixed": "#1c1b1a", "on-secondary": "#ffffff", "inverse-surface": "#2f312e", "on-primary-fixed": "#1c1b1b", "on-tertiary-container": "#868382", "primary": "#000000", "inverse-primary": "#c8c6c5", "surface-bright": "#fafaf5", "on-error": "#ffffff", "tertiary-container": "#1c1b1a", "background": "#fafaf5", "tertiary-fixed": "#e6e2df", "on-tertiary-fixed-variant": "#484645", "on-surface": "#1a1c19", "surface-container-high": "#e8e8e3", "secondary-container": "#db322f", "inverse-on-surface": "#f1f1ec", "outline-variant": "#c4c7c7", "on-tertiary": "#ffffff", "secondary-fixed": "#ffdad6", "outline": "#747878", "on-surface-variant": "#444748", "on-secondary-fixed-variant": "#93000d", "secondary-fixed-dim": "#ffb4ac", "on-secondary-fixed": "#410002", "tertiary": "#000000", "on-primary": "#ffffff", "surface-tint": "#5f5e5e", "primary-fixed-dim": "#c8c6c5", "tertiary-fixed-dim": "#cac6c4", "primary-container": "#1c1b1b", "error": "#ba1a1a", "on-secondary-container": "#fffbff", "primary-fixed": "#e5e2e1", "surface": "#fafaf5", "on-error-container": "#93000a", "secondary": "#b7131a", "surface-container-lowest": "#ffffff", "surface-container-low": "#f4f4ef", "surface-variant": "#e3e3de", "on-primary-container": "#858383", "error-container": "#ffdad6", "on-background": "#1a1c19", "surface-container": "#eeeee9" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-lg": "1.5rem", "margin": "2rem", "space-xl": "2.5rem", "gutter": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem" }, fontFamily: { "body-lg": ["Inter"], "numeric-lg": ["JetBrains Mono"], "headline-lg": ["Inter"], "numeric-sm": ["JetBrains Mono"], "numeric-md": ["JetBrains Mono"], "display-mobile": ["Inter"], "body-sm": ["Inter"], "display": ["Inter"], "body-md": ["Inter"], "label-caps": ["Inter"], "headline-sm": ["Inter"], "headline-md": ["Inter"], "headline-lg-mobile": ["Inter"] }, fontSize: { "body-lg": ["1rem", { lineHeight: "1.5rem", letterSpacing: "-0.01em", fontWeight: "400" }], "numeric-lg": ["1.5rem", { lineHeight: "1.75rem", letterSpacing: "-0.02em", fontWeight: "600" }], "headline-lg": ["2.25rem", { lineHeight: "2.5rem", letterSpacing: "-0.03em", fontWeight: "700" }], "numeric-sm": ["0.75rem", { lineHeight: "1rem", letterSpacing: "0em", fontWeight: "500" }], "numeric-md": ["0.875rem", { lineHeight: "1.25rem", letterSpacing: "0em", fontWeight: "500" }], "display-mobile": ["2.25rem", { lineHeight: "2.5rem", letterSpacing: "-0.03em", fontWeight: "700" }], "body-sm": ["0.75rem", { lineHeight: "1.125rem", letterSpacing: "0em", fontWeight: "400" }], "display": ["3.5rem", { lineHeight: "3.75rem", letterSpacing: "-0.04em", fontWeight: "700" }], "body-md": ["0.875rem", { lineHeight: "1.375rem", letterSpacing: "0em", fontWeight: "400" }], "label-caps": ["0.6875rem", { lineHeight: "0.875rem", letterSpacing: "0.08em", fontWeight: "700" }], "headline-sm": ["1.125rem", { lineHeight: "1.5rem", letterSpacing: "-0.01em", fontWeight: "600" }], "headline-md": ["1.5rem", { lineHeight: "1.75rem", letterSpacing: "-0.02em", fontWeight: "600" }], "headline-lg-mobile": ["1.75rem", { lineHeight: "2rem", letterSpacing: "-0.02em", fontWeight: "700" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#fafaf5;color:#1a1c19;-webkit-font-smoothing:antialiased;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen flex flex-col"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><img alt="Æ Chrono Log Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrCc2TKpZsrMoLWEX_aMcJ9PB-zbO_qC0xy7jK_XBdRoaSM6R0TGxX3q0Q_aBtZfye76j5LW3_t5_sMqABm7zqG6rVCMUbEW6eYuqdPVl5vPBJznmm5II-F_3lCIsdplc1bvP5uah_dVQbrfflnP_RZlKPfQQOWpivD0vDckLKuIi1wV3iKiAMY_qZmVf9g27kJHO8jNNp09lhkBQH5Pk1V0ME7OMlAL7TvnELOI_WA"/><div class="flex flex-col"><span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface leading-none">Æ CHRONO LOG</span><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none mt-1">Catatan</span></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1.5 px-2 py-1 bg-surface-container"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span><span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Tersambung</span></div><button aria-label="Keluar" class="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center font-label-caps text-label-caps uppercase text-secondary hover:text-on-surface transition-colors">Keluar</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 w-full bg-surface pt-14 pb-20"><div class="flex flex-col w-full px-gutter pb-space-xl gap-space-lg">
+<!-- Editorial Intro & Utility Strip -->
+<section class="flex flex-col gap-space-md pt-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 bg-secondary"></span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">ARSIP DOKUMEN</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">Catatan</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm">Arsip catatan rapat, perkuliahan, dan pemikiran pribadi yang terstruktur secara rasional.</p>
+</div>
+<!-- Minimalist Utility Controls -->
+<div class="flex items-center justify-between gap-space-xs pt-space-xs bg-surface-container-low p-2">
+<button aria-label="Perbarui Data" class="flex items-center gap-1 px-2.5 py-1.5 bg-surface text-on-surface font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-container-highest transition-colors" id="btn-refresh">
+<span class="material-symbols-outlined text-[14px]">sync</span>
+<span>Perbarui</span>
+</button>
+<div class="flex items-center gap-1">
+<button aria-label="Ekspor Tampilan Saat Ini" class="flex items-center gap-1 px-2 py-1.5 bg-surface text-on-surface font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-container-highest transition-colors" id="btn-export-view">
+<span class="material-symbols-outlined text-[14px]">file_download</span>
+<span>Tampilan</span>
+</button>
+<button aria-label="Ekspor Seluruh Basis Data" class="flex items-center gap-1 px-2 py-1.5 bg-surface text-on-surface font-label-caps text-label-caps uppercase tracking-wider hover:bg-secondary hover:text-on-secondary transition-colors" id="btn-export-all">
+<span class="material-symbols-outlined text-[14px]">archive</span>
+<span>Semua</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Visual Journal Anchor -->
+<div class="w-full relative bg-surface-container-low p-space-sm flex items-center gap-space-md">
+<img class="w-20 h-20 object-cover shrink-0" data-alt="Black and white minimalist photograph of an architect desk with open grid notebook, fountain pen, and precision brass calipers under crisp morning light, Swiss modernist editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB8fdo30XkA5Lw6pXGlydnAPgB1hXmgKWDBlqvp5MV1AaDBsApSGDGIXVVhZQbirISVMR-L52CoCwRd-YrBYZlzeWHkADjLfo3Nz5L0waLlgDSd-arsoXNASM7BRyshhJyxywFvmqo-CVTJcI_h8avl7kYmMKQqq3YqyiPK_rQtkypuoA3AkKS1gpV9gyfIwVdeJFd5NVxUV7MCpt0HXmZjJI-0yWcJfNkqASCchc"/>
+<div class="flex flex-col justify-center min-w-0">
+<div class="font-label-caps text-label-caps uppercase text-secondary tracking-widest">SISTEM ARCHIVAL</div>
+<div class="font-headline-sm text-headline-sm text-on-surface truncate">Modul 02 // Berkas Teks</div>
+<div class="font-numeric-sm text-numeric-sm text-on-surface-variant mt-0.5">3 Entri Terbuka • 0 Tertunda</div>
+</div>
+</div>
+<!-- Pencarian (Search Bar) -->
+<section class="flex flex-col gap-1.5">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider" for="search-notes">CARI LOG</label>
+<div class="relative flex items-center bg-surface-container-lowest">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[18px] pointer-events-none">search</span>
+<input class="w-full pl-9 pr-3 py-2.5 bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline outline-none focus:bg-surface-container transition-colors" id="search-notes" placeholder="Cari judul atau isi catatan..." type="search"/>
+<button aria-label="Bersihkan pencarian" class="hidden absolute right-2.5 px-1 py-1 text-on-surface-variant hover:text-on-surface" id="clear-search">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+</section>
+<!-- Form Tulis Catatan -->
+<section class="flex flex-col bg-surface-container-lowest">
+<div class="px-space-md py-space-sm bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">add_circle</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface">TULIS CATATAN BARU</span>
+</div>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant">FORM.01</span>
+</div>
+<form class="p-space-md flex flex-col gap-space-md" id="note-form">
+<!-- Input Judul -->
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider" for="note-title">Judul Catatan</label>
+<input class="w-full px-3 py-2 bg-surface-container-low text-on-surface font-headline-sm text-headline-sm placeholder:text-outline focus:bg-surface-container-lowest transition-colors outline-none" id="note-title" placeholder="mis. Notula Rapat Arsitektur Sistem" required="" type="text"/>
+</div>
+<!-- Input Tanggal -->
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider" for="note-date">Tanggal Catat</label>
+<div class="flex items-center bg-surface-container-low">
+<span class="material-symbols-outlined px-2.5 text-on-surface-variant text-[18px]">calendar_today</span>
+<input class="w-full pr-3 py-2 bg-transparent text-on-surface font-numeric-md text-numeric-md focus:outline-none" id="note-date" placeholder="DD/MM/YYYY" type="text" value="28/10/2024"/>
+</div>
+</div>
+<!-- Textarea Isi Catatan -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider" for="note-content">Isi Catatan</label>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant" id="char-counter">0 KARAKTER</span>
+</div>
+<textarea class="w-full p-3 bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:bg-surface-container-lowest transition-colors outline-none resize-none" id="note-content" placeholder="Tuliskan butir pengamatan, agenda keputusan, atau formula struktural..." required="" rows="4"></textarea>
+</div>
+<!-- Primary Action Button -->
+<button aria-label="Simpan Catatan" class="w-full mt-space-xs py-3 bg-primary text-on-primary font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-secondary transition-colors" type="submit">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Simpan Catatan</span>
+</button>
+</form>
+</section>
+<!-- Editorial Section Divider & Counter -->
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-on-surface"></span>
+<h2 class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface">DAFTAR CATATAN TERARSIP</h2>
+</div>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant">TOTAL: 03 ENTRI</span>
+</div>
+<!-- Daftar Catatan (Ledger Items List) -->
+<section class="flex flex-col gap-space-sm" id="notes-ledger">
+<!-- Item 1 -->
+<article class="note-card bg-surface-container-lowest p-space-md flex flex-col gap-space-xs transition-colors hover:bg-surface-container-low" data-content="penyimpanan lokal sqlite terbukti sangat andal tanpa latensi jaringan rotasi kunci enkripsi" data-title="evaluasi arsitektur database sinkronisasi lokal">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 bg-secondary"></span>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant uppercase tracking-wider">24 OKT 2024</span>
+</div>
+<span class="px-1.5 py-0.5 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase">ARSIP-003</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight mt-1">Evaluasi Arsitektur Database &amp; Sinkronisasi Lokal</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        Penyimpanan lokal SQLite terbukti sangat andal tanpa latensi jaringan. Perlu mempertimbangkan rotasi kunci enkripsi setiap kuartal guna menegakkan protokol integritas data.
+      </p>
+<div class="flex items-center justify-end gap-2 pt-space-xs mt-space-xs bg-surface-container-lowest">
+<button aria-label="Ubah Catatan" class="btn-action-edit px-3 py-1.5 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-container-highest transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span>Ubah</span>
+</button>
+<button aria-label="Hapus Catatan" class="btn-action-delete px-3 py-1.5 bg-error-container text-on-error-container font-label-caps text-label-caps uppercase tracking-wider hover:bg-secondary hover:text-on-secondary transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">delete</span>
+<span>Hapus</span>
+</button>
+</div>
+</article>
+<!-- Item 2 -->
+<article class="note-card bg-surface-container-lowest p-space-md flex flex-col gap-space-xs transition-colors hover:bg-surface-container-low" data-content="prinsip josef muller brockmann menekankan kejelasan fungsional di atas dekorasi subjektif" data-title="catatan kuliah tipografi swiss grid rasional">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 bg-on-surface"></span>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant uppercase tracking-wider">18 OKT 2024</span>
+</div>
+<span class="px-1.5 py-0.5 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase">ARSIP-002</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight mt-1">Catatan Kuliah: Tipografi Swiss &amp; Grid Rasional</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        Prinsip Josef Müller-Brockmann menekankan kejelasan fungsional di atas dekorasi subjektif. Spasi dan ukuran tipe menjadi pembeda hierarki visual yang mutlak tanpa ornamen pelengkap.
+      </p>
+<div class="flex items-center justify-end gap-2 pt-space-xs mt-space-xs bg-surface-container-lowest">
+<button aria-label="Ubah Catatan" class="btn-action-edit px-3 py-1.5 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-container-highest transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span>Ubah</span>
+</button>
+<button aria-label="Hapus Catatan" class="btn-action-delete px-3 py-1.5 bg-error-container text-on-error-container font-label-caps text-label-caps uppercase tracking-wider hover:bg-secondary hover:text-on-secondary transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">delete</span>
+<span>Hapus</span>
+</button>
+</div>
+</article>
+<!-- Item 3 -->
+<article class="note-card bg-surface-container-lowest p-space-md flex flex-col gap-space-xs transition-colors hover:bg-surface-container-low" data-content="semua tonggak capaian q3 telah diserahkan tepat waktu migrasi api perbankan laporan audit internal" data-title="ringkasan rapat triwulan klien studio">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 bg-on-surface"></span>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant uppercase tracking-wider">10 OKT 2024</span>
+</div>
+<span class="px-1.5 py-0.5 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase">ARSIP-001</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight mt-1">Ringkasan Rapat Triwulan Klien Studio</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+        Semua tonggak capaian Q3 telah diserahkan tepat waktu. Target Q4 berfokus pada penyelesaian migrasi API perbankan dan laporan audit internal sebelum evaluasi tahunan.
+      </p>
+<div class="flex items-center justify-end gap-2 pt-space-xs mt-space-xs bg-surface-container-lowest">
+<button aria-label="Ubah Catatan" class="btn-action-edit px-3 py-1.5 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-container-highest transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span>Ubah</span>
+</button>
+<button aria-label="Hapus Catatan" class="btn-action-delete px-3 py-1.5 bg-error-container text-on-error-container font-label-caps text-label-caps uppercase tracking-wider hover:bg-secondary hover:text-on-secondary transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">delete</span>
+<span>Hapus</span>
+</button>
+</div>
+</article>
+<!-- Empty Search State -->
+<div class="hidden flex-col items-center justify-center p-space-lg bg-surface-container-lowest gap-2 text-center" id="search-empty-state">
+<span class="material-symbols-outlined text-secondary text-[28px]">search_off</span>
+<p class="font-headline-sm text-headline-sm text-on-surface">Tidak Ditemukan</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tidak ada arsip yang cocok dengan kata kunci pencarian Anda.</p>
+</div>
+</section>
+<!-- Pagination / Load More Ledger Button -->
+<section class="pt-space-xs">
+<button aria-label="Muat 100 catatan lagi" class="w-full py-3 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-surface-container-highest active:bg-primary active:text-on-primary transition-colors" id="btn-load-more">
+<span class="material-symbols-outlined text-[16px]">more_horiz</span>
+<span>Muat 100 Catatan Lagi</span>
+</button>
+</section>
+<!-- Archival Verification Stamp -->
+<footer class="flex items-center justify-between pt-space-md text-on-surface-variant">
+<div class="flex items-center gap-1 font-numeric-sm text-numeric-sm">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>INDEX CHECK: OK</span>
+</div>
+<span class="font-label-caps text-label-caps uppercase tracking-widest">ISO 8601 COMPLIANT</span>
+</footer>
+</div>
+<script>
+  // Dynamic Character Counter for Form
+  const noteContentInput = document.getElementById('note-content');
+  const charCounter = document.getElementById('char-counter');
+  if (noteContentInput && charCounter) {
+    noteContentInput.addEventListener('input', (e) => {
+      const len = e.target.value.length;
+      charCounter.textContent = `${len} KARAKTER`;
+    });
+  }
+
+  // Instant Search Micro-Interaction
+  const searchInput = document.getElementById('search-notes');
+  const clearSearchBtn = document.getElementById('clear-search');
+  const noteCards = document.querySelectorAll('.note-card');
+  const emptyState = document.getElementById('search-empty-state');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      if (query.length > 0) {
+        clearSearchBtn?.classList.remove('hidden');
+      } else {
+        clearSearchBtn?.classList.add('hidden');
+      }
+
+      noteCards.forEach((card) => {
+        const title = card.getAttribute('data-title') || '';
+        const content = card.getAttribute('data-content') || '';
+        if (title.includes(query) || content.includes(query)) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0 && query.length > 0) {
+        emptyState?.classList.remove('hidden');
+        emptyState?.classList.add('flex');
+      } else {
+        emptyState?.classList.add('hidden');
+        emptyState?.classList.remove('flex');
+      }
+    });
+
+    clearSearchBtn?.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.focus();
+    });
+  }
+
+  // Form Submission
+  const noteForm = document.getElementById('note-form');
+  if (noteForm) {
+    noteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('note-title').value;
+      const date = document.getElementById('note-date').value;
+      const content = document.getElementById('note-content').value;
+
+      if (!title || !content) return;
+
+      const ledger = document.getElementById('notes-ledger');
+      const newCard = document.createElement('article');
+      newCard.className = 'note-card bg-surface-container-lowest p-space-md flex flex-col gap-space-xs transition-colors hover:bg-surface-container-low';
+      newCard.setAttribute('data-title', title.toLowerCase());
+      newCard.setAttribute('data-content', content.toLowerCase());
+
+      newCard.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-secondary"></span>
+            <span class="font-numeric-sm text-numeric-sm text-on-surface-variant uppercase tracking-wider">${date}</span>
+          </div>
+          <span class="px-1.5 py-0.5 bg-secondary text-on-secondary font-label-caps text-label-caps uppercase">BARU</span>
+        </div>
+        <h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight mt-1">${title}</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">${content}</p>
+        <div class="flex items-center justify-end gap-2 pt-space-xs mt-space-xs bg-surface-container-lowest">
+          <button class="btn-action-edit px-3 py-1.5 bg-surface-container text-on-surface font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-container-highest transition-colors flex items-center gap-1" aria-label="Ubah Catatan">
+            <span class="material-symbols-outlined text-[14px]">edit</span>
+            <span>Ubah</span>
+          </button>
+          <button class="btn-action-delete px-3 py-1.5 bg-error-container text-on-error-container font-label-caps text-label-caps uppercase tracking-wider hover:bg-secondary hover:text-on-secondary transition-colors flex items-center gap-1" aria-label="Hapus Catatan">
+            <span class="material-symbols-outlined text-[14px]">delete</span>
+            <span>Hapus</span>
+          </button>
+        </div>
+      `;
+
+      ledger.insertBefore(newCard, ledger.firstChild);
+      noteForm.reset();
+      charCounter.textContent = '0 KARAKTER';
+    });
+  }
+
+  // Edit & Delete Micro-Interactions via Delegation
+  document.getElementById('notes-ledger')?.addEventListener('click', (e) => {
+    const target = e.target;
+    const deleteBtn = target.closest('.btn-action-delete');
+    const editBtn = target.closest('.btn-action-edit');
+
+    if (deleteBtn) {
+      const card = deleteBtn.closest('.note-card');
+      if (card) {
+        card.style.opacity = '0.3';
+        setTimeout(() => card.remove(), 180);
+      }
+    }
+
+    if (editBtn) {
+      const card = editBtn.closest('.note-card');
+      const titleElem = card.querySelector('h3');
+      const bodyElem = card.querySelector('p');
+      if (titleElem && bodyElem) {
+        document.getElementById('note-title').value = titleElem.textContent.trim();
+        document.getElementById('note-content').value = bodyElem.textContent.trim();
+        document.getElementById('note-content').dispatchEvent(new Event('input'));
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      }
+    }
+  });
+
+  // Load More Interaction
+  const btnLoadMore = document.getElementById('btn-load-more');
+  if (btnLoadMore) {
+    btnLoadMore.addEventListener('click', () => {
+      btnLoadMore.textContent = 'SEMUA CATATAN DIMUAT (3/3)';
+      btnLoadMore.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+      btnLoadMore.disabled = true;
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-secondary border-t-2 border-secondary font-bold"><div class="h-16 px-gutter flex items-stretch"><a class="flex-1 flex items-center justify-center min-h-[44px] gap-space-xs text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps uppercase tracking-widest transition-colors" data-path="keuangan" href="#"><span class="material-symbols-outlined text-[20px]">account_balance</span><span>Keuangan</span></a><a aria-current="page" class="flex-1 flex items-center justify-center min-h-[44px] gap-space-xs uppercase tracking-widest transition-colors text-secondary border-t-2 border-secondary font-bold" data-path="catatan" href="#"><span class="material-symbols-outlined text-[20px]">edit_note</span><span>Catatan</span></a></div></nav></body></html>

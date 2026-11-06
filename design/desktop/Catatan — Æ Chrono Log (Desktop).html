@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-highest":"#e3e3de","tertiary-fixed-dim":"#cac6c4","surface-container-low":"#f4f4ef","on-secondary-container":"#fffbff","secondary-container":"#db322f","on-primary-fixed-variant":"#474746","surface-container-lowest":"#ffffff","on-tertiary-fixed":"#1c1b1a","on-primary-fixed":"#1c1b1b","error-container":"#ffdad6","surface-container-high":"#e8e8e3","on-tertiary-fixed-variant":"#484645","background":"#fafaf5","on-secondary-fixed":"#410002","on-error":"#ffffff","on-secondary":"#ffffff","surface-tint":"#5f5e5e","surface":"#fafaf5","on-surface-variant":"#444748","primary-container":"#1c1b1b","on-error-container":"#93000a","on-surface":"#1a1c19","primary-fixed":"#e5e2e1","surface-bright":"#fafaf5","tertiary-container":"#1c1b1a","on-secondary-fixed-variant":"#93000d","primary":"#000000","on-tertiary-container":"#868382","tertiary":"#000000","surface-container":"#eeeee9","on-tertiary":"#ffffff","outline-variant":"#c4c7c7","surface-dim":"#dadad5","secondary":"#b7131a","tertiary-fixed":"#e6e2df","inverse-surface":"#2f312e","secondary-fixed-dim":"#ffb4ac","outline":"#747878","inverse-primary":"#c8c6c5","inverse-on-surface":"#f1f1ec","on-background":"#1a1c19","on-primary-container":"#858383","surface-variant":"#e3e3de","secondary-fixed":"#ffdad6","primary-fixed-dim":"#c8c6c5","on-primary":"#ffffff","error":"#ba1a1a"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-xs":"0.25rem","space-xl":"2.5rem","space-md":"1rem","margin":"2rem","space-sm":"0.5rem","space-lg":"1.5rem","gutter":"1.5rem"},fontFamily:{"numeric-sm":["JetBrains Mono"],"headline-md":["Inter"],"headline-lg":["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"body-lg":["Inter"],"headline-sm":["Inter"],"headline-lg-mobile":["Inter"],"numeric-md":["JetBrains Mono"],"label-caps":["Inter"],"display-mobile":["Inter"],"display":["Inter"],"numeric-lg":["JetBrains Mono"]},fontSize:{"numeric-sm":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0em","fontWeight":"500"}],"headline-md":["1.5rem",{"lineHeight":"1.75rem","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg":["2.25rem",{"lineHeight":"2.5rem","letterSpacing":"-0.03em","fontWeight":"700"}],"body-md":["0.875rem",{"lineHeight":"1.375rem","letterSpacing":"0em","fontWeight":"400"}],"body-sm":["0.75rem",{"lineHeight":"1.125rem","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["1rem",{"lineHeight":"1.5rem","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-sm":["1.125rem",{"lineHeight":"1.5rem","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["1.75rem",{"lineHeight":"2rem","letterSpacing":"-0.02em","fontWeight":"700"}],"numeric-md":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0em","fontWeight":"500"}],"label-caps":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.08em","fontWeight":"700"}],"display-mobile":["2.25rem",{"lineHeight":"2.5rem","letterSpacing":"-0.03em","fontWeight":"700"}],"display":["3.5rem",{"lineHeight":"3.75rem","letterSpacing":"-0.04em","fontWeight":"700"}],"numeric-lg":["1.5rem",{"lineHeight":"1.75rem","letterSpacing":"-0.02em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low border-r border-outline-variant z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="p-space-lg border-b border-outline-variant bg-surface-container-lowest"><div class="flex items-center gap-space-sm mb-space-xs"><span class="w-2.5 h-2.5 bg-secondary-container inline-block"></span><span class="font-headline-sm text-headline-sm text-primary uppercase tracking-tight">Æ Chrono Log</span></div><div class="font-label-caps text-label-caps uppercase text-on-surface-variant">Workspace Pribadi // v1.0</div></div><nav class="flex flex-col py-space-sm" data-active-classes="bg-surface-container-lowest text-primary font-bold border-l-2 border-secondary"><a class="px-space-lg py-space-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors flex items-center justify-between" data-path="keuangan" href="#"><span class="font-headline-sm text-headline-sm">Keuangan</span><span class="font-numeric-sm text-numeric-sm text-on-surface-variant">01</span></a><a aria-current="page" class="px-space-lg py-space-md transition-colors flex items-center justify-between bg-surface-container-lowest text-primary font-bold border-l-2 border-secondary" data-path="catatan" href="#"><span class="font-headline-sm text-headline-sm">Catatan</span><span class="font-numeric-sm text-numeric-sm text-on-surface-variant">02</span></a></nav></div><div class="p-space-lg border-t border-outline-variant bg-surface-container-lowest flex flex-col gap-space-md"><div class="flex items-center gap-space-xs font-label-caps text-label-caps uppercase text-on-surface"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container inline-block"></span><span>Tersambung</span></div><a class="font-label-caps text-label-caps uppercase text-on-surface-variant hover:text-secondary transition-colors inline-block" data-path="login" href="#">Keluar</a><div class="font-numeric-sm text-numeric-sm text-on-surface-variant pt-space-xs border-t border-outline-variant">AES-256 / ISO 8601</div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest border-b border-outline-variant z-40 flex items-center justify-between px-space-lg"><div class="font-label-caps text-label-caps uppercase text-on-surface-variant tracking-wider">Arsip Terpusat · Ledger System</div><div class="flex items-center gap-space-md"><div class="font-numeric-sm text-numeric-sm text-on-surface">1440PX // GRID OK</div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="p-space-xl border-b border-outline-variant bg-surface-container-lowest">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-lg mb-space-lg">
+<div class="max-w-2xl">
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="w-2 h-2 bg-secondary-container inline-block"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Katalog Rekam Pemikiran // Modul 02</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary uppercase tracking-tight">Catatan</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+          Arsip catatan rapat, perkuliahan, dan pemikiran pribadi yang terstruktur secara rasional.
+        </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="px-space-md py-space-sm border border-outline-variant bg-surface hover:bg-surface-container transition-colors font-label-caps text-label-caps uppercase text-on-surface flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">sync</span>
+<span>Perbarui</span>
+</button>
+<button class="px-space-md py-space-sm border border-outline-variant bg-surface hover:bg-surface-container transition-colors font-label-caps text-label-caps uppercase text-on-surface flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">view_agenda</span>
+<span>Tampilan</span>
+</button>
+<button class="px-space-md py-space-sm border border-outline-variant bg-surface hover:bg-surface-container transition-colors font-label-caps text-label-caps uppercase text-on-surface flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">folder_open</span>
+<span>Semua Berkas</span>
+</button>
+<button class="px-space-md py-space-sm bg-primary hover:bg-secondary-container transition-colors font-label-caps text-label-caps uppercase text-on-primary flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-sm">download</span>
+<span>Ekspor Arsip</span>
+</button>
+</div>
+</div>
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 pl-space-md flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-base">search</span>
+</div>
+<input class="w-full pl-10 pr-space-md py-space-sm bg-surface-container-low border border-outline-variant font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:outline-none focus:bg-surface-container-lowest transition-colors" id="quickSearch" placeholder="Cari judul atau isi catatan..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-space-md flex items-center pointer-events-none">
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant">CMD+K</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 w-full min-h-[calc(100vh-14rem)]">
+<!-- Kolom Kiri: Form Entri & Metrik Arsip -->
+<div class="lg:col-span-5 border-r border-outline-variant bg-surface-container-low flex flex-col justify-between">
+<div class="p-space-xl flex flex-col gap-space-lg">
+<!-- Status Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-space-lg">
+<div class="flex items-center justify-between border-b border-outline-variant pb-space-sm mb-space-md">
+<span class="font-label-caps text-label-caps uppercase text-on-surface-variant">Status Operasional</span>
+<div class="flex items-center gap-1.5 font-numeric-sm text-numeric-sm">
+<span class="w-1.5 h-1.5 bg-secondary-container"></span>
+<span class="text-on-surface">NOMINAL</span>
+</div>
+</div>
+<div class="font-body-md text-body-md font-semibold text-primary mb-space-sm">
+            Sistem Archival Modul 02 // Berkas Teks
+          </div>
+<div class="grid grid-cols-2 gap-space-md pt-space-xs">
+<div class="border-l border-outline-variant pl-space-sm">
+<div class="font-label-caps text-label-caps uppercase text-on-surface-variant">Entri Terbuka</div>
+<div class="font-numeric-lg text-numeric-lg text-primary">03</div>
+</div>
+<div class="border-l border-outline-variant pl-space-sm">
+<div class="font-label-caps text-label-caps uppercase text-on-surface-variant">Tertunda Sync</div>
+<div class="font-numeric-lg text-numeric-lg text-on-surface-variant">00</div>
+</div>
+</div>
+</div>
+<!-- Form Entry -->
+<div class="bg-surface-container-lowest border border-outline-variant p-space-lg">
+<div class="flex items-center justify-between border-b border-outline-variant pb-space-sm mb-space-lg">
+<h2 class="font-headline-sm text-headline-sm text-primary uppercase">Tulis Catatan Baru</h2>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant">FORM.01</span>
+</div>
+<form class="flex flex-col gap-space-md" id="noteForm" onsubmit="event.preventDefault();">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant" for="judul">Judul Catatan</label>
+<input class="w-full px-space-md py-space-sm bg-surface-container-lowest border border-outline-variant font-body-md text-body-md text-on-surface focus:border-primary focus:outline-none transition-colors" id="judul" placeholder="mis. Notula Rapat Arsitektur Sistem" type="text"/>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant" for="tanggal">Tanggal Catat</label>
+<input class="w-full px-space-md py-space-sm bg-surface-container-lowest border border-outline-variant font-body-md text-body-md text-on-surface focus:border-primary focus:outline-none transition-colors" id="tanggal" type="date" value="2024-10-28"/>
+</div>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-caps text-label-caps uppercase text-on-surface-variant" for="isi">Isi Catatan</label>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant" id="charCount">0 KARAKTER</span>
+</div>
+<textarea class="w-full p-space-md bg-surface-container-lowest border border-outline-variant font-body-md text-body-md text-on-surface focus:border-primary focus:outline-none transition-colors resize-none" id="isi" placeholder="Tuliskan butir pengamatan, agenda keputusan, atau formula struktural..." rows="6"></textarea>
+</div>
+<div class="pt-space-sm">
+<button class="w-full py-space-md bg-primary text-on-primary hover:bg-secondary-container transition-colors flex items-center justify-center gap-space-sm font-label-caps text-label-caps uppercase" type="button">
+<span class="material-symbols-outlined text-base">save</span>
+<span>Simpan Catatan</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<div class="p-space-lg border-t border-outline-variant font-numeric-sm text-numeric-sm text-on-surface-variant flex justify-between items-center bg-surface-container-lowest">
+<span>MEMORI TEKSTUAL: 1.2 MB / 512 MB</span>
+<span class="text-secondary font-bold">● LOKAL</span>
+</div>
+</div>
+<!-- Kolom Kanan: Daftar Catatan Terarsip -->
+<div class="lg:col-span-7 bg-surface-container-lowest flex flex-col justify-between">
+<div class="flex flex-col">
+<!-- Header Daftar -->
+<div class="p-space-lg border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-primary uppercase">Daftar Catatan Terarsip</span>
+<span class="px-1.5 py-0.5 border border-outline-variant text-[10px] font-numeric-sm uppercase bg-surface-container-lowest text-on-surface">Koleksi Aktif</span>
+</div>
+<span class="font-numeric-sm text-numeric-sm text-on-surface-variant">TOTAL: 03 ENTRI</span>
+</div>
+<!-- Archival Items -->
+<div class="divide-y divide-outline-variant" id="archiveList">
+<!-- Item 003 -->
+<article class="p-space-xl hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between mb-space-sm font-numeric-sm text-numeric-sm text-on-surface-variant">
+<div class="flex items-center gap-space-md">
+<span class="font-bold text-primary">ARSIP-003</span>
+<span class="text-outline-variant">|</span>
+<span>24 Okt 2024</span>
+</div>
+<div class="flex items-center gap-space-xs font-label-caps text-label-caps uppercase">
+<button class="px-space-sm py-1 border border-outline-variant hover:border-primary hover:text-primary transition-colors bg-surface-container-lowest">Ubah</button>
+<button class="px-space-sm py-1 border border-outline-variant hover:border-secondary hover:text-secondary transition-colors bg-surface-container-lowest">Hapus</button>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-space-xs">
+              Evaluasi Arsitektur Database &amp; Sinkronisasi Lokal
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl leading-relaxed">
+              Penyimpanan lokal SQLite terbukti sangat andal tanpa latensi jaringan. Perlu mempertimbangkan rotasi kunci enkripsi setiap kuartal guna menegakkan protokol integritas data.
+            </p>
+<div class="mt-space-md flex items-center gap-space-sm font-label-caps text-label-caps uppercase text-on-surface-variant">
+<span class="bg-surface-container-high px-1.5 py-0.5">Sistem</span>
+<span class="bg-surface-container-high px-1.5 py-0.5">Basis Data</span>
+<span class="font-numeric-sm text-numeric-sm ml-auto">164 Chars</span>
+</div>
+</article>
+<!-- Item 002 -->
+<article class="p-space-xl hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between mb-space-sm font-numeric-sm text-numeric-sm text-on-surface-variant">
+<div class="flex items-center gap-space-md">
+<span class="font-bold text-primary">ARSIP-002</span>
+<span class="text-outline-variant">|</span>
+<span>18 Okt 2024</span>
+</div>
+<div class="flex items-center gap-space-xs font-label-caps text-label-caps uppercase">
+<button class="px-space-sm py-1 border border-outline-variant hover:border-primary hover:text-primary transition-colors bg-surface-container-lowest">Ubah</button>
+<button class="px-space-sm py-1 border border-outline-variant hover:border-secondary hover:text-secondary transition-colors bg-surface-container-lowest">Hapus</button>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-space-xs">
+              Catatan Kuliah: Tipografi Swiss &amp; Grid Rasional
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl leading-relaxed">
+              Prinsip Josef Müller-Brockmann menekankan kejelasan fungsional di atas dekorasi subjektif. Spasi dan ukuran tipe menjadi pembeda hierarki visual yang mutlak tanpa ornamen pelengkap.
+            </p>
+<div class="mt-space-md flex items-center gap-space-sm font-label-caps text-label-caps uppercase text-on-surface-variant">
+<span class="bg-surface-container-high px-1.5 py-0.5">Desain</span>
+<span class="bg-surface-container-high px-1.5 py-0.5">Akademik</span>
+<span class="font-numeric-sm text-numeric-sm ml-auto">184 Chars</span>
+</div>
+</article>
+<!-- Item 001 -->
+<article class="p-space-xl hover:bg-surface-container transition-colors">
+<div class="flex items-center justify-between mb-space-sm font-numeric-sm text-numeric-sm text-on-surface-variant">
+<div class="flex items-center gap-space-md">
+<span class="font-bold text-primary">ARSIP-001</span>
+<span class="text-outline-variant">|</span>
+<span>10 Okt 2024</span>
+</div>
+<div class="flex items-center gap-space-xs font-label-caps text-label-caps uppercase">
+<button class="px-space-sm py-1 border border-outline-variant hover:border-primary hover:text-primary transition-colors bg-surface-container-lowest">Ubah</button>
+<button class="px-space-sm py-1 border border-outline-variant hover:border-secondary hover:text-secondary transition-colors bg-surface-container-lowest">Hapus</button>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-space-xs">
+              Ringkasan Rapat Triwulan Klien Studio
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl leading-relaxed">
+              Semua tonggak capaian Q3 telah diserahkan tepat waktu. Target Q4 berfokus pada penyelesaian migrasi API perbankan dan laporan audit internal sebelum evaluasi tahunan.
+            </p>
+<div class="mt-space-md flex items-center gap-space-sm font-label-caps text-label-caps uppercase text-on-surface-variant">
+<span class="bg-surface-container-high px-1.5 py-0.5">Rapat</span>
+<span class="bg-surface-container-high px-1.5 py-0.5">Operasional</span>
+<span class="font-numeric-sm text-numeric-sm ml-auto">172 Chars</span>
+</div>
+</article>
+</div>
+<div class="p-space-xl border-t border-outline-variant flex justify-center bg-surface">
+<button class="w-full max-w-md py-space-md border border-outline hover:border-primary bg-surface-container-lowest hover:bg-surface-container font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all flex items-center justify-center gap-space-sm">
+<span>··· Muat 100 Catatan Lagi</span>
+</button>
+</div>
+</div>
+<!-- Archival Footer Metadata Tag -->
+<div class="p-space-lg border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-space-sm bg-surface-container-low font-numeric-sm text-numeric-sm text-on-surface-variant">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 bg-primary"></span>
+<span>INDEX CHECK: OK • ISO 8601 COMPLIANT</span>
+</div>
+<div class="uppercase tracking-widest text-[11px]">
+          ARSIP ELEKTRONIK INDEPENDEN — ZERO EXTERNAL DEPENDENCY
+        </div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  const isiTextarea = document.getElementById('isi');
+  const charCounter = document.getElementById('charCount');
+  if (isiTextarea && charCounter) {
+    isiTextarea.addEventListener('input', function() {
+      const len = this.value.length;
+      charCounter.textContent = `${len} KARAKTER`;
+    });
+  }
+
+  const searchInput = document.getElementById('quickSearch');
+  const articles = document.querySelectorAll('#archiveList article');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      articles.forEach(article => {
+        const text = article.textContent.toLowerCase();
+        if (text.includes(query)) {
+          article.style.display = 'block';
+        } else {
+          article.style.display = 'none';
+        }
+      });
+    });
+  }
+</script></main></div></body></html>
