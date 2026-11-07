@@ -1,0 +1,713 @@
+Æ CHRONO LOG — HASIL WAWANCARA KEBUTUHAN
+Catatan hasil wawancara dan keputusan kebutuhan; rujukan implementasi adalah SRS v1.22
+Versi: 1.22 (baseline kebutuhan, 7 November 2026)
+Pembaruan versi 1.22: seluruh pertanyaan terbuka OQ-03/04, OQ-08-11, OQ-14-17, OQ-19/20 ditutup dengan baseline rekomendasi atas arahan pengguna; scope keamanan, backup, notifikasi, backlog, desain, dan pengendalian ide ditetapkan. SRS siap menjadi dasar implementasi bertahap setelah ditinjau; persetujuan Cloudflare tetap terpisah.
+Pembaruan versi 1.21: detail MVP mata kuliah (OQ-12), sinkronisasi offline/conflict/retry/delete (OQ-13), benchmark performa dan kapasitas minimum (OQ-18), serta pemisahan Worker/D1 MVP dari v1.0 ditetapkan pada 6 November 2026.
+Pembaruan versi 1.20: konversi Inbox membuat entitas tugas/agenda baru yang tertaut ke sumber; sumber ditandai "Dikonversi" dan dikeluarkan dari Inbox aktif (OQ-07, keputusan 6 November 2026).
+Pembaruan versi 1.19: tugas lewat deadline diberi label “Terlambat” tanpa mengubah status otomatis; pengingat tetap berhenti setelah hari-H (OQ-06b, keputusan 6 November 2026).
+Pembaruan versi 1.18: satu tugas dapat ditautkan ke beberapa mata kuliah dan agenda pada MVP; Area/Proyek menyusul (OQ-06a, keputusan 6 November 2026).
+Pembaruan versi 1.17: agenda dibatalkan tetap tampak berlabel, agenda pindahan tampil pada waktu baru, dan perubahan dicatat di pusat notifikasi (OQ-05d, keputusan 6 November 2026).
+Pembaruan versi 1.16: perubahan/pembatalan satu kejadian berulang hanya memengaruhi pengingat kejadian itu (OQ-05c, keputusan 6 November 2026).
+Pembaruan versi 1.15: preset bawaan agenda adalah 30 menit sebelum Timed dan 1 hari sebelum All-day (OQ-05b, keputusan 6 November 2026).
+Pembaruan versi 1.14: agenda baru memakai preset pengingat bawaan; nilai preset masih perlu dipilih (OQ-05b, keputusan 6 November 2026).
+Pembaruan versi 1.13: waktu pengingat agenda memakai preset umum dan durasi khusus; pengingat bawaan dan perilaku agenda berulang masih terbuka (OQ-05a, keputusan 6 November 2026).
+Pembaruan versi 1.12: modul Area Kehidupan penuh ditunda setelah MVP (OQ-02, keputusan 6 November 2026).
+Pembaruan versi 1.11: relasi agenda-proyek aktif setelah modul proyek tersedia; bukan bagian MVP (OQ-01d, keputusan 6 November 2026).
+Pembaruan versi 1.10: offline-sync MVP dibatasi pada data modul MVP yang tersedia; catatan/keuangan menyusul (OQ-01c, keputusan 6 November 2026).
+Pembaruan versi 1.9: Inbox MVP boleh dikonversi menjadi tugas atau agenda; catatan/proyek menyusul (OQ-01b, keputusan 6 November 2026).
+Pembaruan versi 1.8: Global Search masuk MVP; cakupan awal mengikuti modul MVP yang tersedia (OQ-01a, keputusan 6 November 2026).
+Pembaruan versi 1.7: menambahkan hasil Pertanyaan 55–64 (prioritas MVP, enkripsi backup, kategori keuangan, milestone, area tanpa/terarsip, catatan, lampiran, performa, kriteria selesai).
+Pembaruan versi 1.6: Pertanyaan 54 dijawab (PWA, Chrome dan Edge terbaru).
+Pembaruan versi 1.5: menambahkan hasil Pertanyaan 44–53 (akun, backup, notifikasi, search); Pertanyaan 54 (platform) belum dijawab.
+Pembaruan versi 1.4: konfirmasi bahwa satu kejadian agenda berulang boleh dipindahkan ke tanggal/jam lain.
+Pembaruan versi 1.3: konfirmasi pengingat tugas berhenti setelah hari-H; mata kuliah tersedia offline, proyek tidak.
+Tanggal kompilasi: 6 November 2026
+Pembaruan versi 1.1: menambahkan hasil Pertanyaan 29–33 (bagian 7 poin E–I).
+Pembaruan versi 1.2: menambahkan hasil Pertanyaan 34–43 (bagian 5, 7 poin J, 8, 11, 12, 16, 18, 22, 23).
+
+============================================================
+1. TUJUAN DOKUMEN
+============================================================
+
+Dokumen ini merangkum hasil wawancara kebutuhan pengguna untuk proyek Æ Chrono Log. Tujuannya agar wawancara dapat dilanjutkan oleh AI lain tanpa harus mengulang pertanyaan yang sudah dijawab.
+
+PENTING:
+- Ini belum merupakan Functional Requirements Specification (SRS) final.
+- Isi dibedakan menjadi keputusan yang sudah disetujui, usulan yang masih perlu dikonfirmasi, dan pertanyaan yang belum dijawab.
+- Jangan menganggap fitur yang masih berupa usulan sebagai keputusan final.
+- Lanjutkan wawancara secara bertahap: satu pertanyaan utama per giliran, dengan gaya percakapan natural.
+- Hindari memberikan daftar pertanyaan panjang sekaligus.
+
+Repositori yang diberikan pengguna:
+https://github.com/hilmi-zam/AE-Chrono-Log
+
+Nama proyek: Æ Chrono Log
+
+============================================================
+2. LATAR BELAKANG DAN MASALAH PENGGUNA
+============================================================
+
+Pengguna ingin membangun sistem produktivitas pribadi yang berfungsi seperti "second brain" untuk mengelola kehidupan sehari-hari.
+
+Sebelumnya pengguna memakai Notion untuk berbagai kebutuhan:
+- Mencatat tugas dan aktivitas.
+- Mengelola keuangan.
+- Menyimpan catatan dan informasi.
+- Mengelola informasi kehidupan secara umum.
+
+Masalah yang dirasakan:
+- Notion terasa berat atau lambat pada laptop dengan spesifikasi terbatas.
+- Notion membutuhkan koneksi internet untuk pengalaman penggunaan yang optimal.
+- Pengguna pernah mempertimbangkan Telegram bot, tetapi integrasi dan kebutuhan hub/akun/layanan terasa merepotkan.
+- Pengguna ingin membangun alternatif yang lebih sesuai dengan kebutuhannya.
+- Pengembangan proyek sering kehilangan arah karena muncul ide baru, terlalu sering mengubah desain, dan mengutak-atik UI sebelum fungsi inti selesai.
+- Pengguna ingin memiliki patokan kebutuhan yang jelas agar pengembangan tidak terus melebar.
+
+Motivasi utama:
+Saat membuka aplikasi pada pagi hari, pengguna ingin dapat melihat informasi penting tentang hari itu, agenda, kegiatan belajar, tugas, dan hal-hal yang tidak boleh terlupakan.
+
+AI integration:
+- Integrasi AI merupakan rencana untuk tahap berikutnya.
+- AI bukan fokus implementasi tahap awal/MVP.
+
+============================================================
+3. VISI PRODUK
+============================================================
+
+Æ Chrono Log diarahkan menjadi personal life management system atau second brain pribadi.
+
+Pertanyaan utama yang harus dijawab dashboard:
+"Hari ini aku harus melakukan apa, dan apa yang tidak boleh aku lupakan?"
+
+Aplikasi tidak boleh hanya menjadi task manager atau aplikasi catatan. Sistem diharapkan menghubungkan aktivitas, jadwal, tugas, catatan, pembelajaran, proyek, dan informasi pribadi dalam satu tempat.
+
+Pengguna ingin sistem yang:
+- Ringan dan nyaman digunakan.
+- Bisa digunakan untuk berbagai area kehidupan.
+- Memiliki satu pusat informasi harian.
+- Bisa digunakan pada laptop dan ponsel.
+- Tetap dapat digunakan ketika offline untuk data penting.
+- Menyinkronkan data ant perangkat ketika koneksi tersedia.
+- Tidak membuat pengguna harus mencatat informasi yang sama berulang kali.
+
+============================================================
+4. PROFIL PENGGUNA DAN BATAS PENGGUNAAN
+============================================================
+
+Keputusan yang sudah disampaikan:
+- Sistem ditujukan untuk pengguna sendiri terlebih dahulu.
+- Tidak membutuhkan registrasi publik atau sistem multi-user untuk saat ini.
+- Data bersifat pribadi.
+- Satu akun dapat digunakan pada beberapa perangkat milik pengguna.
+- Pengguna ingin memakai aplikasi di laptop dan ponsel.
+- Kolaborasi dan berbagi data dengan pengguna lain bukan kebutuhan tahap awal.
+
+Catatan:
+- Detail mekanisme pembuatan akun, autentikasi, dan pemulihan akun masih perlu dipastikan.
+- Rekomendasi awal adalah autentikasi email dan password sebagai metode utama, dengan kemungkinan PIN lokal untuk mengunci aplikasi pada perangkat. Pengguna meminta agar pilihan teknis disesuaikan dengan rekomendasi yang paling tepat. Ini belum menjadi keputusan final.
+
+============================================================
+5. AREA KEHIDUPAN / MODUL YANG DIKELOLA
+============================================================
+
+Pengguna tidak ingin sistem hanya berorientasi pada kehidupan mahasiswa. Sistem harus dapat berkembang mengikuti kebutuhan pribadi.
+
+Keputusan:
+- Pengguna dapat membuat area kehidupan sendiri.
+- Area tidak dibatasi pada daftar kategori bawaan.
+- Contoh area awal yang pernah dibahas: Pendidikan, Pekerjaan, Organisasi, dan Personal.
+- Pengguna dapat menambah area baru.
+- Area dapat diubah, diarsipkan, atau dihapus.
+
+Keputusan penghapusan area (Pertanyaan 37) — DISETUJUI:
+- Ketika area dihapus, data yang terhubung tetap ada dan hanya kehilangan hubungan ke area tersebut (data menjadi tanpa area).
+- Konsekuensi: sistem harus mengizinkan data tanpa area.
+
+Keputusan Pertanyaan 59 — DISETUJUI:
+- Data baru boleh dibuat tanpa area.
+- Data tanpa area ditampilkan dalam daftar khusus "Tanpa Area" agar mudah ditemukan.
+
+Keputusan Pertanyaan 60 — DISETUJUI:
+- Area yang diarsipkan disembunyikan sepenuhnya, termasuk dari pencarian.
+- Belum dipastikan: bagaimana data yang terhubung ke area terarsip ditampilkan (misalnya tugas atau agenda yang masih aktif) dan cara memulihkan area dari arsip.
+
+Relasi lintas area:
+- Pengguna setuju bahwa satu informasi atau objek dapat terhubung ke lebih dari satu area.
+- Contoh: proyek Joglo66 dapat berkaitan dengan Pendidikan dan Organisasi tanpa perlu membuat dua salinan data.
+- Hindari duplikasi data ketika satu objek relevan untuk beberapa area.
+
+============================================================
+6. DASHBOARD DAN DAILY COMMAND CENTER
+============================================================
+
+Kebutuhan utama dashboard:
+- Menampilkan jadwal hari ini.
+- Menampilkan agenda dan kelas.
+- Menampilkan target atau tugas.
+- Menampilkan kegiatan/acara yang akan datang.
+- Menampilkan pengingat agar hal penting tidak terlupakan.
+
+Dashboard harus membantu pengguna memahami prioritas dan aktivitas hari itu dengan cepat.
+
+Belum dipastikan:
+- Urutan dan tata letak widget dashboard.
+- Apakah pengguna dapat menyusun ulang widget.
+- Informasi ringkasan lain yang perlu tampil.
+- Apakah dashboard dapat dikustomisasi per pengguna.
+
+Catatan desain:
+Jangan terlalu cepat masuk ke detail visual. Tentukan fungsi dan informasi yang harus tersedia sebelum membahas desain UI.
+
+============================================================
+7. KALENDER DAN AGENDA
+============================================================
+
+Keputusan yang sudah disetujui:
+
+A. Satu kalender terpadu
+Semua aktivitas berada dalam satu kalender, bukan kalender terpisah untuk tiap kebutuhan.
+
+Contoh aktivitas:
+- Kuliah rutin.
+- Rapat organisasi.
+- Janji dengan seseorang.
+- Kegiatan pribadi.
+- Deadline tugas.
+- Acara atau kegiatan tertentu.
+- Agenda proyek.
+
+B. Kategori atau warna
+- Aktivitas dapat dibedakan menggunakan kategori atau warna.
+- Contoh kategori: Kuliah, Organisasi, Pribadi, dan Proyek.
+- Kategori diharapkan dapat disesuaikan.
+
+C. Tampilan kalender
+Pengguna ingin dapat mengganti tampilan kalender:
+- Harian: aktivitas berdasarkan jam.
+- Mingguan: jadwal dan agenda selama satu minggu.
+- Bulanan: gambaran agenda selama satu bulan.
+
+Pengguna menyetujui ketiga tampilan tersebut dan ingin dapat berpindah-pindah di antaranya.
+
+D. Jadwal kuliah
+Kebutuhan yang telah dijelaskan:
+- Jadwal kuliah mingguan dapat diatur berulang.
+- Setiap mata kuliah memiliki halaman tersendiri.
+- Halaman mata kuliah memuat informasi mata kuliah.
+- Materi, catatan, tugas, dan informasi pertemuan dapat dikaitkan dengan mata kuliah.
+- Perubahan pertemuan tertentu perlu dicatat tanpa menghilangkan konteks jadwal normal.
+- Contoh: pertemuan ke-13 mata kuliah Pengujian Perangkat Lunak berubah menjadi online.
+- Pengguna ingin informasi terkait suatu mata kuliah dapat dilihat dalam satu tempat.
+
+E. Agenda berulang dan pengecualian satu kejadian (Pertanyaan 29) — DISETUJUI
+- Agenda berulang mendukung perubahan atau pembatalan satu kejadian tertentu tanpa memengaruhi kejadian lainnya.
+- Contoh: jadwal kuliah setiap Senin pukul 08.00–10.00; satu pertemuan dipindahkan ke Rabu pukul 13.00–15.00; jadwal Senin pada minggu-minggu berikutnya tetap normal.
+- Dikonfirmasi pengguna: satu kejadian dapat dipindahkan ke tanggal/jam lain, selain diubah isinya atau dibatalkan, sementara jadwal normal tetap berjalan.
+
+F. Jenis agenda: Timed dan All-day (Pertanyaan 30) — DISETUJUI
+- Timed Event: agenda dengan jam mulai dan selesai.
+- All-day Event: agenda sepanjang hari tanpa kewajiban menentukan jam.
+- Contoh All-day Event: hari libur nasional, pengumpulan berkas beasiswa, acara kampus, perjalanan atau kegiatan sehari penuh.
+- Keduanya tetap muncul di kalender terpadu.
+
+G. Zona waktu (Pertanyaan 31) — DISETUJUI
+- Zona waktu kalender mengikuti pengaturan zona waktu perangkat secara otomatis.
+- Ketika berpindah negara, jam agenda menyesuaikan zona waktu perangkat.
+- Tidak ada pengaturan zona waktu manual per agenda. (Opsi C, zona waktu berbeda per agenda, sempat direkomendasikan tetapi tidak dipilih pengguna.)
+- Catatan teknis: waktu perlu disimpan secara konsisten agar sinkronisasi antar perangkat tidak menyebabkan pergeseran waktu yang tidak diinginkan.
+
+H. Relasi agenda dengan data lain (Pertanyaan 32) — DISETUJUI
+- Agenda dapat dihubungkan dengan tugas, proyek, mata kuliah, area kehidupan, serta catatan atau informasi terkait.
+- Prinsip: relasi antar-data, bukan salinan data.
+- Contoh: satu agenda rapat terhubung ke proyek Joglo66 dan area Organisasi sekaligus; agenda tersebut juga dapat ditemukan dari halaman proyek.
+
+I. Lokasi dan tautan agenda (Pertanyaan 33) — DISETUJUI
+- Setiap agenda dapat memiliki lokasi fisik (gedung, ruang kelas, alamat) dan tautan online (Google Meet, Zoom).
+- Keduanya bersifat opsional.
+- Satu agenda dapat memiliki lokasi fisik sekaligus tautan online.
+
+J. Pengingat agenda (Pertanyaan 34) — DISETUJUI
+- Setiap agenda dapat memiliki beberapa pengingat sekaligus.
+- Contoh: ujian diingatkan H-1 dan 30 menit sebelumnya; rapat cukup 15 menit sebelumnya.
+- DIPUTUSKAN 2026-11-06: pengguna memilih preset waktu umum sekaligus durasi khusus.
+- DIPUTUSKAN 2026-11-06: preset bawaan agenda Timed adalah 30 menit sebelumnya; untuk All-day adalah 1 hari sebelumnya. Pengguna dapat mengubah atau menambah pengingat.
+- DIPUTUSKAN 2026-11-06: perubahan/pembatalan satu kejadian berulang hanya memperbarui/menghapus pengingat kejadian itu; kejadian lain tidak berubah.
+- DIPUTUSKAN 2026-11-06: agenda yang dibatalkan tetap tampak dengan label "Dibatalkan" dan pengingatnya berhenti; agenda yang dipindahkan tampil pada waktu baru, pengingat mengikuti waktu baru, dan perubahan dicatat di pusat notifikasi.
+
+============================================================
+8. TASK / PENGELOLAAN TUGAS
+============================================================
+
+Keputusan dan preferensi:
+- Tugas memiliki deskripsi; pengguna tidak membutuhkan kolom catatan terpisah karena informasi tambahan dapat digabung ke deskripsi.
+- Tugas memiliki deadline.
+- Tugas memiliki status.
+- Pengguna tidak membutuhkan prioritas tugas untuk saat ini.
+- Pengguna meminta status "Revisi" sebagai salah satu status.
+
+Status yang diusulkan dan diterima:
+1. Belum dikerjakan
+2. Sedang dikerjakan
+3. Revisi
+4. Selesai
+
+Pengingat:
+- Pengguna menginginkan pengingat deadline sederhana, termasuk H-3.
+- Pengguna sebelumnya ingin pengingat muncul berulang/sering sampai tugas selesai (lihat pembaruan Pertanyaan 36 di bawah).
+- Usulan awal: pengingat berhenti ketika status menjadi Selesai. Perilaku ini masih perlu dikonfirmasi secara eksplisit.
+
+Keputusan Pertanyaan 35 — DISETUJUI:
+- Tugas berulang dan subtask TIDAK masuk MVP; dicatat sebagai backlog.
+
+Keputusan Pertanyaan 36 — DISETUJUI:
+- Pengingat tugas muncul pada H-3, H-1, dan hari-H, lalu berhenti.
+- Dikonfirmasi pengguna: pengingat berhenti setelah hari-H dan tugas yang lewat deadline tidak diingatkan lagi. Ini menggantikan keinginan awal "berulang sampai tugas selesai".
+
+Diputuskan 2026-11-06:
+- Satu tugas dapat ditautkan ke beberapa mata kuliah dan agenda pada MVP; hubungan ke area/proyek tersedia setelah modulnya ada.
+- Tugas yang lewat deadline diberi label "Terlambat" selama belum Selesai; status tidak berubah otomatis dan pengingat berhenti setelah hari-H.
+
+============================================================
+9. QUICK CAPTURE / INBOX
+============================================================
+
+Pengguna menyetujui fitur Quick Capture atau Inbox.
+
+Tujuan:
+Memungkinkan pengguna menyimpan sesuatu dengan cepat tanpa harus menentukan kategori atau lokasi penyimpanan terlebih dahulu.
+
+Jenis input tahap awal:
+- Teks atau ide.
+- Tautan/URL.
+
+Belum menjadi kebutuhan awal:
+- Gambar.
+- File.
+- Audio/rekaman suara.
+
+Alur yang diharapkan:
+- Pengguna memasukkan teks atau tautan ke Inbox.
+- Item dapat dibiarkan di Inbox.
+- Pada MVP, item dapat dikonversi menjadi tugas (termasuk deadline bila perlu) atau agenda.
+- Item dapat dikonversi menjadi catatan atau dihubungkan ke proyek setelah modul terkait tersedia; hubungan ke area menyusul setelah modul Area tersedia.
+- Item dapat dihapus.
+
+Penting:
+Konversi membuat entitas tugas/agenda baru yang tertaut ke item Inbox asal. Sumber ditandai "Dikonversi" dan tidak lagi ditampilkan di Inbox aktif, tetapi tetap dapat dilacak sebagai sumber.
+
+============================================================
+10. CATATAN DAN KNOWLEDGE LIBRARY
+============================================================
+
+Pengguna membutuhkan tempat untuk menyimpan pengetahuan umum di luar materi kuliah.
+
+Contoh:
+- Laravel.
+- AI.
+- Software engineering.
+- Informasi atau pengetahuan lain yang dipelajari secara mandiri.
+
+Keputusan:
+- Ada modul Knowledge Library.
+- Catatan dapat berupa pengetahuan umum dan dapat dihubungkan dengan mata kuliah, proyek, atau area kehidupan.
+- Pengguna memilih pendekatan catatan terstruktur daripada meniru Notion sepenuhnya.
+- Pengguna ingin editor yang sederhana tetapi tetap mendukung format dasar.
+
+Format editor dasar yang disetujui:
+- Heading dan subheading.
+- Bold dan italic.
+- Bullet list.
+- Numbered list.
+- Checklist.
+- Hyperlink.
+
+Bukan prioritas tahap awal:
+- Block editor kompleks.
+- Nested pages yang kompleks.
+- Visual database seperti Notion.
+- Drag-and-drop block tingkat lanjut.
+
+Rekomendasi yang telah dibahas:
+Gunakan metadata terstruktur (judul, isi, kategori/topik, tag, relasi) dengan editor teks sederhana. Ini merupakan pendekatan hybrid: struktur data tetap jelas, tetapi penulisan tidak terlalu kaku.
+
+Keputusan Pertanyaan 61 — DISETUJUI:
+- Kategori/topik dan tag dibuat sendiri oleh pengguna.
+- Catatan tidak memiliki status draft.
+- Catatan tidak memiliki riwayat revisi.
+
+Keputusan Pertanyaan 62 — DISETUJUI:
+- Lampiran didukung pada catatan saja (bukan pada tugas, agenda, atau transaksi).
+- Belum dipastikan: jenis lampiran (gambar, PDF, file lain), batas ukuran, dan perlakuan lampiran saat offline dan saat backup.
+
+============================================================
+11. KEUANGAN PRIBADI
+============================================================
+
+Pengguna meminta pengelolaan keuangan yang sederhana dan tidak terlalu rumit.
+
+Fungsi yang dibahas sebagai cakupan awal:
+- Pemasukan.
+- Pengeluaran.
+- Transfer antar akun/dompet.
+- Kategori transaksi.
+- Pengelolaan akun/dompet.
+- Pemantauan saldo.
+- Riwayat transaksi.
+
+Jangan langsung menambahkan fitur yang tidak diminta seperti investasi, utang-piutang kompleks, anggaran lanjutan, atau analisis finansial mendalam.
+
+Keputusan Pertanyaan 41 — DISETUJUI:
+- Saldo awal diinput untuk setiap akun/dompet.
+- Kategori transaksi memakai kategori bawaan saja (tidak dapat dibuat sendiri pada tahap awal).
+
+Keputusan Pertanyaan 57 — DISETUJUI (kategori bawaan):
+- Pemasukan: Gaji/Uang saku, Lainnya.
+- Pengeluaran: Makan, Transportasi, Pendidikan, Belanja, Tagihan, Hiburan, Lainnya.
+
+Belum dipastikan:
+- Apakah satu transaksi dapat memiliki lampiran.
+- Apakah transaksi dapat dikaitkan ke area atau proyek.
+- Apakah laporan bulanan diperlukan.
+- Apakah ekspor transaksi diperlukan dan dalam format apa.
+
+============================================================
+12. PROJECT MANAGEMENT
+============================================================
+
+Pengguna menyetujui modul proyek tersendiri. Proyek bukan sekadar kategori tugas.
+
+Halaman proyek diusulkan memuat:
+- Deskripsi/tujuan proyek.
+- Status proyek.
+- Daftar tugas.
+- Agenda/jadwal.
+- Catatan atau dokumen.
+- Anggota/pihak yang terlibat (masih perlu divalidasi karena sistem untuk satu pengguna).
+
+Status proyek yang diusulkan:
+- Direncanakan.
+- Sedang berjalan.
+- Selesai.
+- Ditunda.
+
+Proyek dapat dikaitkan dengan lebih dari satu area kehidupan.
+
+Keputusan Pertanyaan 42 — DISETUJUI:
+- Proyek memiliki tanggal mulai, target selesai, dan milestone.
+
+Keputusan Pertanyaan 58 — DISETUJUI:
+- Milestone memiliki judul, tanggal target, dan status (belum/selesai).
+- Milestone tampil di kalender terpadu.
+
+Belum dipastikan:
+- Hubungan milestone dengan tugas (apakah tugas dapat ditautkan ke milestone).
+- Apakah anggota/pihak yang terlibat benar-benar dibutuhkan.
+- Apakah proyek dapat memiliki progres persentase.
+- Apakah proyek dapat diarsipkan.
+
+============================================================
+13. GLOBAL SEARCH
+============================================================
+
+Pengguna menyetujui satu fitur pencarian global.
+
+Pencarian tidak hanya berdasarkan judul, tetapi juga isi konten.
+
+Cakupan pencarian yang dibahas:
+- Catatan.
+- Materi pembelajaran.
+- Proyek.
+- Tugas.
+- Quick Capture/Inbox.
+- Agenda.
+- Informasi lain yang tersimpan dalam sistem.
+
+Keputusan Pertanyaan 52 — DISETUJUI:
+- Ada filter berdasarkan jenis data (catatan, tugas, agenda, proyek, dan lainnya).
+- Hasil diurutkan berdasarkan relevansi.
+
+Keputusan Pertanyaan 53 — DISETUJUI:
+- Pencarian harus dapat dipakai offline untuk data inti yang tersedia offline.
+
+Belum dipastikan:
+- Filter tambahan (area, tanggal, kategori).
+
+============================================================
+14. HABIT TRACKING
+============================================================
+
+Pengguna memutuskan bahwa habit tracking belum diperlukan untuk tahap sekarang.
+
+Status:
+- Tidak masuk cakupan awal/MVP.
+- Dapat dipertimbangkan kembali pada pengembangan berikutnya.
+
+============================================================
+15. NOTIFIKASI DAN PENGINGAT
+============================================================
+
+Keputusan:
+- Pengguna ingin notifikasi dapat muncul di luar aplikasi jika memungkinkan.
+- Pengguna setuju dengan pendekatan notifikasi perangkat/browser (misalnya Web Push/PWA).
+- Pengguna ingin pengaturan notifikasi dapat disesuaikan.
+
+Jenis notifikasi yang dibahas:
+- Deadline tugas.
+- Agenda.
+- Jadwal kuliah atau perubahan jadwal.
+- Pengingat proyek.
+
+Pengguna ingin preferensi notifikasi dapat diatur.
+
+Catatan teknis:
+- Notifikasi browser/perangkat membutuhkan izin pengguna.
+- Pengiriman push bergantung pada dukungan browser, sistem operasi, konfigurasi perangkat, dan koneksi.
+- Tetap sediakan notifikasi di dalam aplikasi sebagai pelengkap.
+- Jangan menjanjikan push notification selalu terkirim ketika perangkat offline atau browser membatasi proses latar belakang.
+
+Keputusan Pertanyaan 50 — DISETUJUI:
+- Notifikasi dapat diatur per jenis: tugas, agenda, jadwal kuliah, dan proyek.
+- Jam tenang tidak dipilih (tidak masuk cakupan awal).
+
+Keputusan Pertanyaan 51 — DISETUJUI:
+- Ada pusat notifikasi di dalam aplikasi yang menyimpan riwayat pengingat.
+
+Belum dipastikan:
+- Berapa lama riwayat notifikasi disimpan di pusat notifikasi.
+- Frekuensi pengingat dan aturan pengulangan di luar yang sudah diputuskan untuk tugas (bagian 8) dan agenda (bagian 7 poin J).
+
+============================================================
+16. OFFLINE-FIRST DAN SINKRONISASI
+============================================================
+
+Pengguna sangat setuju dengan pendekatan offline-first.
+
+Harapan:
+- Data penting tetap dapat dilihat dan dikelola ketika tidak ada internet.
+- Perubahan lokal disimpan terlebih dahulu.
+- Ketika koneksi kembali tersedia, data disinkronkan ke cloud.
+- Pengguna dapat menggunakan data yang sama dari laptop dan ponsel.
+- Perubahan dari satu perangkat akan muncul di perangkat lain setelah sinkronisasi.
+
+Arsitektur yang pernah direkomendasikan sebagai opsi:
+- PWA (Progressive Web App).
+- Service Worker untuk dukungan aplikasi web.
+- IndexedDB untuk penyimpanan lokal.
+- Cloudflare Workers sebagai backend/API.
+- Cloudflare D1 sebagai database cloud.
+
+Catatan:
+Ini rekomendasi teknis, bukan keputusan arsitektur final. Perlu diperiksa kesesuaiannya dengan kebutuhan, kemampuan implementasi, biaya, batasan platform, dan repositori saat ini.
+
+Keputusan Pertanyaan 38 — DISETUJUI:
+- Data inti wajib tersedia offline: agenda, tugas, Inbox, catatan, dan keuangan.
+- Dikonfirmasi pengguna: mata kuliah ikut tersedia offline; proyek tidak wajib tersedia offline.
+
+Keputusan Pertanyaan 39 — DISETUJUI:
+- Data biasa: perubahan terbaru (waktu terakhir) dipakai otomatis jika terjadi konflik.
+- Catatan panjang: sistem meminta pengguna memilih versi yang dipakai.
+- Belum dipastikan: batas "catatan panjang" dan data mana yang termasuk data biasa.
+
+Belum dipastikan:
+- Bagaimana pengguna mengetahui status sinkronisasi.
+- Apakah sinkronisasi berlangsung otomatis saat aplikasi dibuka/koneksi kembali.
+- Bagaimana menangani kegagalan sinkronisasi.
+- Apakah penghapusan data juga disinkronkan.
+
+============================================================
+17. MULTI-DEVICE
+============================================================
+
+Keputusan:
+- Satu pengguna dapat memakai akun yang sama di laptop dan ponsel.
+- Data harus tersinkronisasi ant perangkat.
+- Perubahan saat offline disimpan lokal dan dikirim ketika koneksi tersedia.
+- Tidak ada kebutuhan kolaborasi banyak pengguna pada tahap awal.
+
+============================================================
+18. AUTENTIKASI DAN PRIVASI
+============================================================
+
+Konteks:
+- Sistem hanya digunakan oleh satu pengguna untuk saat ini.
+- Tidak membutuhkan registrasi publik.
+- Data bersifat pribadi.
+- Pengguna meminta rekomendasi teknis yang sesuai.
+
+Rekomendasi sementara:
+- Autentikasi email dan password.
+- PIN lokal opsional untuk mengunci aplikasi pada perangkat.
+- Mekanisme pemulihan akun yang aman.
+- Pendaftaran akun dibatasi untuk pemilik sistem, bukan pendaftaran publik.
+
+Keputusan Pertanyaan 40 — DISETUJUI:
+- Autentikasi email dan password.
+- Sesi login tersimpan di perangkat sehingga aplikasi dapat dibuka saat offline.
+- PIN lokal bersifat opsional.
+
+Keputusan Pertanyaan 44 — DISETUJUI:
+- Akun pertama dibuat sekali lewat langkah setup awal oleh pemilik sistem; setelah akun pertama ada, pendaftaran terkunci.
+
+Keputusan Pertanyaan 45 — DISETUJUI:
+- Pemulihan akun memakai kode pemulihan sekali pakai yang disimpan sendiri oleh pengguna saat setup (tidak bergantung pada layanan email).
+- Belum dipastikan: apa yang terjadi jika kode pemulihan hilang, dan apakah kode dibuat ulang setelah dipakai.
+
+Keputusan Pertanyaan 46 — DISETUJUI:
+- Sesi login kedaluwarsa setelah jangka tertentu, lalu pengguna login ulang.
+- Jika PIN lokal aktif, aplikasi dikunci otomatis setelah tidak dipakai beberapa menit.
+- Belum dipastikan: angka pastinya (contoh yang dibahas: 30 hari untuk sesi) dan lama tidak aktif sebelum PIN mengunci.
+
+Belum disepakati secara rinci:
+- Kebijakan enkripsi dan keamanan data.
+
+============================================================
+19. BACKUP DAN PEMULIHAN DATA
+============================================================
+
+Pengguna memilih opsi C: backup otomatis ditambah backup/export manual dan pemulihan.
+
+Kebutuhan yang disepakati secara umum:
+- Backup otomatis secara berkala.
+- Pengguna dapat membuat backup manual.
+- Pengguna dapat mengunduh/menyimpan backup.
+- Pengguna dapat memulihkan data dari backup.
+- Integritas data harus diperhatikan.
+
+Keputusan Pertanyaan 47 — DISETUJUI:
+- Frekuensi backup otomatis diatur oleh pengguna (harian, mingguan, atau dimatikan).
+
+Keputusan Pertanyaan 48 — DISETUJUI:
+- Sistem menyimpan 30 backup terakhir.
+- Format file backup: JSON.
+
+Keputusan Pertanyaan 49 — DISETUJUI:
+- Restore mengganti seluruh data.
+- Sebelum menimpa, sistem otomatis membuat backup dari data saat ini.
+
+Keputusan Pertanyaan 56 — DISETUJUI:
+- Enkripsi backup bersifat opsional; pengguna memilihnya saat membuat backup.
+
+Belum dipastikan:
+- Frekuensi bawaan jika pengguna belum mengatur.
+- Cara kerja password backup terenkripsi dan akibatnya jika password hilang.
+- Apakah backup mencakup file/lampiran (jika fitur lampiran kelak tersedia).
+
+============================================================
+20. TAMPILAN KALENDER
+============================================================
+
+Keputusan terbaru:
+Pengguna ingin tampilan kalender dapat diganti-ganti.
+
+Tiga tampilan yang disetujui:
+- Harian.
+- Mingguan.
+- Bulanan.
+
+============================================================
+21. KEPUTUSAN TERBARU: KALENDER TERPADU
+============================================================
+
+Pengguna menyetujui bahwa semua aktivitas masuk ke satu kalender terpadu.
+
+Contoh aktivitas:
+- Kuliah.
+- Organisasi.
+- Pribadi.
+- Proyek.
+- Janji.
+- Deadline.
+- Acara tertentu.
+
+Aktivitas dapat dibedakan berdasarkan kategori atau warna. Kategori dapat disesuaikan.
+
+============================================================
+22. KEPUTUSAN REALIGNMENT DAN PRIORITAS MVP
+============================================================
+
+Pertanyaan 29 sampai 64 sudah dijawab (lihat bagian 5, 7, 8, 10, 11, 12, 13, 15, 16, 18, 19, dan keputusan di bawah).
+
+Keputusan Pertanyaan 55 — Prioritas MVP — DISETUJUI:
+- Masuk MVP: dashboard, kalender/agenda, tugas, mata kuliah, Inbox, Global Search, notifikasi, offline-sync, login, dan backup.
+- Di luar MVP (backlog): Area Kehidupan, catatan/Knowledge Library, keuangan, dan manajemen proyek.
+- Poin klarifikasi yang telah ditetapkan:
+  a. **DIPUTUSKAN 2026-11-06:** Global Search masuk MVP, dengan cakupan awal pada modul MVP yang tersedia (tugas, agenda, mata kuliah, dan Inbox).
+  b. **DIPUTUSKAN 2026-11-06:** Pada MVP, Inbox dapat dikonversi menjadi tugas atau agenda. Konversi menjadi catatan atau hubungan ke proyek aktif setelah modul tersebut tersedia.
+  c. **DIPUTUSKAN 2026-11-06:** Offline-sync MVP hanya mencakup data modul MVP yang tersedia (agenda, tugas, mata kuliah, Inbox, serta data untuk Global Search). Catatan dan keuangan menyusul bersama modul backlog.
+  d. **DIPUTUSKAN 2026-11-06:** Hubungan agenda ke proyek aktif setelah modul proyek tersedia; bukan bagian MVP.
+  e. **DIPUTUSKAN 2026-11-06:** Modul Area Kehidupan penuh ditunda setelah MVP. Data MVP tidak wajib memiliki area; fungsi area/relasinya menyusul.
+
+Keputusan OQ-07 — Konversi Inbox — DISETUJUI 2026-11-06:
+- Konversi membuat entitas tugas/agenda baru yang tertaut ke item Inbox sumber.
+- Item sumber ditandai "Dikonversi" dan dikeluarkan dari Inbox aktif agar tidak muncul sebagai duplikasi; hubungan ke sumber tetap tersedia.
+
+Keputusan OQ-12 — Detail mata kuliah MVP — DISETUJUI 2026-11-06:
+- Setiap mata kuliah adalah penawaran tersendiri per periode. Nama wajib; kode, pengajar, tahun akademik, label semester/periode, rentang tanggal, dan warna opsional.
+- Halaman mata kuliah menampilkan jadwal, pertemuan, tugas, topik/ringkasan teks per pertemuan, dan tautan materi opsional. Jadwal mingguan memakai agenda berulang sebagai sumber data; perubahan satu pertemuan mengikuti aturan pengecualian agenda.
+- Penawaran yang selesai dapat diarsipkan tanpa menghapus riwayat. Lampiran dan editor catatan kaya tidak masuk MVP.
+
+Keputusan OQ-13 — Sinkronisasi MVP — DISETUJUI 2026-11-06:
+- Semua data MVP adalah data terstruktur biasa. Catatan panjang didefinisikan lebih dari 10.000 karakter; aturan memilih versi berlaku saat modul catatan tersedia.
+- Status sinkronisasi: Offline, Menunggu sinkronisasi, Menyinkronkan, Tersinkron, atau Perlu perhatian. Sinkronisasi berjalan setelah perubahan, saat aplikasi dibuka/dikembalikan ke foreground, dan saat koneksi pulih.
+- Kegagalan sementara dicoba ulang dengan exponential backoff+jitter hingga jeda maksimum 5 menit; tersedia retry manual. Operasi memakai ID idempoten.
+- Server memberi nomor revisi monotonik. Konflik data terstruktur diselesaikan otomatis dengan versi terbaru; versi yang kalah tetap dapat dipulihkan dan konflik diberitahukan. Perubahan stale yang belum tersinkron tidak boleh hilang diam-diam.
+- Penghapusan disinkronkan sebagai tombstone dan tidak dibersihkan otomatis selama perangkat masih terdaftar.
+
+Keputusan OQ-18 — Performa dan kapasitas MVP — DISETUJUI 2026-11-06:
+- Perangkat acuan: Windows 11, CPU 4-core setara minimal 2 GHz, RAM 8 GB, SSD, layar 1366×768; uji terpisah di Chrome dan Edge stable.
+- Dataset benchmark tetap: 10.000 rekaman (100 mata kuliah, 2.000 tugas, 5.000 kejadian agenda, 1.000 Inbox, 1.900 notifikasi). Ini kapasitas minimum yang dijamin, bukan batas keras input.
+- Ukur waktu dari membuka PWA yang sudah terpasang dan cache awal tersedia sampai dashboard siap digunakan: 20 cold start untuk setiap browser dan kondisi online/offline (80 run total). P95 harus kurang dari 2 detik.
+
+Keputusan arsitektur dan perlindungan data realignment — DISETUJUI sebagai baseline 2026-11-06:
+- MVP baru memakai PWA/Service Worker, IndexedDB, Worker/API, dan D1 khusus yang terpisah dari Worker dan D1 v1.0. Tidak ada pemakaian bersama binding/database dan tidak ada migrasi data v1.0.
+- v1.0 tetap berjalan; tidak mengubah resource atau konfigurasi produksinya. Sebelum membuat resource/deploy, pemilik meninjau biaya dan menyetujui resource, domain, serta secrets secara langsung.
+- Rilis baru diuji di staging; backup v1.0 dan uji pemulihan pada salinan wajib dilakukan sebelum cutover. Rollback dengan mengembalikan rute ke v1.0. Migrasi data v1.0 hanya dapat dibahas lewat persetujuan dan rencana terpisah.
+
+Keputusan Pertanyaan 63 — Target performa — DISETUJUI:
+- Dashboard tampil dalam kurang dari 2 detik setelah aplikasi dibuka, termasuk saat offline.
+- Kondisi pengujian dan kapasitas minimum ditetapkan pada keputusan OQ-18 di atas.
+
+Keputusan Pertanyaan 64 — Kriteria fitur selesai — DISETUJUI:
+- Fitur dianggap selesai jika semua skenario utamanya berhasil dijalankan di Chrome dan Edge, baik online maupun offline.
+
+Keputusan Pertanyaan 54 — Platform dan instalasi — DISETUJUI:
+- Aplikasi berbentuk PWA yang dapat dipasang di laptop dan ponsel.
+- Dukungan browser: Chrome dan Edge versi terbaru.
+- Catatan: Safari/iOS tidak termasuk target dukungan. Jika kelak memakai iPhone, perilaku notifikasi push dan penyimpanan lokal perlu dievaluasi ulang.
+
+OQ-01 sampai OQ-20 telah ditutup dalam baseline SRS v1.22; rincian keputusan terbaru tercantum di bagian 23 dan SRS.
+
+Keputusan Pertanyaan 43 — Aturan scope — DISETUJUI:
+- Ide baru selama pengembangan dicatat di Inbox Æ Chrono Log sendiri dan ditinjau setiap akhir minggu.
+- Ide baru tidak langsung masuk milestone berjalan.
+- Ide masuk milestone hanya bila mendukung tujuan MVP, memiliki skenario penerimaan yang jelas, dan tidak menambah scope/dependensi yang belum disetujui; selain itu tetap di backlog.
+
+============================================================
+23. STATUS WAWANCARA
+============================================================
+
+Tidak ada pertanyaan kebutuhan yang masih menghambat baseline SRS. OQ-01 sampai OQ-20 telah dijawab atau ditutup sebagai keputusan realignment pada SRS v1.22. Keputusan backlog menetapkan arah bila modul tersebut kelak dikerjakan, tetapi tidak memasukkannya ke MVP.
+
+Ringkasan keputusan baseline 2026-11-07:
+- Akun: sesi maksimum 30 hari, PIN lokal 5 menit, reset password memakai kode pemulihan sekali pakai; kehilangan password dan kode berarti tidak ada pemulihan.
+- Keamanan: HTTPS, verifier Argon2id, cookie aman, rate limit, dan enkripsi cloud at-rest yang dikelola penyedia.
+- Notifikasi: riwayat 90 hari/maksimum 1.000 item; tidak ada pengulangan di luar jadwal pengingat yang telah ditetapkan.
+- Backup: mingguan sebagai default; AES-256-GCM opsional dengan KDF berversi; password hilang tidak dapat dipulihkan; validasi checksum/format sebelum restore.
+- Area, catatan, keuangan, proyek, dan kustomisasi dashboard tetap backlog; detail batas fitur masing-masing ada di SRS.
+- Ide baru hanya masuk milestone jika memenuhi BR-14; perubahan UI dibatasi pada kriteria OQ-20.
+
+Sebelum implementasi, tinjau SRS v1.22. Sebelum membuat resource, menyimpan secrets, atau melakukan staging/deployment Cloudflare, minta persetujuan pemilik secara terpisah dan ikuti ketentuan koeksistensi, backup, serta rollback di SRS.
+
+============================================================
+24. PANDUAN UNTUK AI YANG MELANJUTKAN PEKERJAAN
+============================================================
+
+SRS v1.22 adalah baseline kebutuhan yang dituntaskan atas arahan pengguna pada 7 November 2026. Gunakan SRS sebagai sumber kebutuhan utama; jangan membuka kembali keputusan tanpa alasan teknis/produk yang konkret.
+
+- Implementasikan MVP saja; backlog dan OUT tidak boleh masuk milestone tanpa persetujuan perubahan scope.
+- Jaga aplikasi dan data v1.0 tetap utuh. Jangan mengubah D1/Worker produksi, membuat resource Cloudflare, menyimpan secrets, atau deploy tanpa persetujuan pemilik.
+- Terapkan kebutuhan secara terukur dan uji acceptance criteria terkait.
+- Ide baru dicatat di Inbox/backlog dan hanya masuk milestone bila memenuhi BR-14.
+- Perubahan UI dibatasi sesuai keputusan OQ-20.
+
+AKHIR DOKUMEN
