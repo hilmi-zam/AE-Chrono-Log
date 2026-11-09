@@ -94,39 +94,59 @@ export function normalizeCourse(input) {
   }
 }
 
-export function normalizeAgenda(input) {
-  const title = String(input.title ?? '').trim()
-  if (!title) throw new Error('Judul agenda wajib diisi.')
+function normalizeAgendaDetails(input) {
   const category = String(input.category ?? 'Pribadi').trim() || 'Pribadi'
   if (category.length > 80) throw new Error('Kategori agenda maksimal 80 karakter.')
   const categoryColor = String(input.categoryColor ?? AGENDA_COLORS[0])
   if (!/^#[\da-f]{6}$/i.test(categoryColor)) throw new Error('Warna agenda tidak valid.')
   const location = String(input.location ?? '').trim()
   if (location.length > 200) throw new Error('Lokasi agenda maksimal 200 karakter.')
-  const onlineUrl = normalizeHttpUrl(input.onlineUrl, 'Tautan online')
-  const reminders = normalizeReminders(input.reminders, Boolean(input.allDay))
+  return {
+    category,
+    categoryColor,
+    location,
+    onlineUrl: normalizeHttpUrl(input.onlineUrl, 'Tautan online'),
+    reminders: normalizeReminders(input.reminders, Boolean(input.allDay)),
+  }
+}
 
-  const recurrence = input.recurrence === 'weekly'
-    ? { frequency: 'weekly', until: String(input.repeatUntil ?? '') }
-    : null
+function normalizeAgendaRecurrence(input) {
+  if (input.recurrence !== 'weekly') return null
+  const recurrence = { frequency: 'weekly', until: String(input.repeatUntil ?? '') }
   if (recurrence && !isValidDateKey(recurrence.until)) {
     throw new Error('Tanggal akhir pengulangan mingguan wajib diisi.')
   }
+  return recurrence
+}
 
-  if (input.allDay) {
-    const date = String(input.date ?? '')
-    if (!isValidDateKey(date)) throw new Error('Tanggal agenda wajib diisi.')
-    if (recurrence && recurrence.until < date) throw new Error('Tanggal akhir pengulangan harus setelah tanggal mulai.')
-    return { title, allDay: true, date, startsAt: null, endsAt: null, recurrence, courseId: String(input.courseId ?? ''), category, categoryColor, location, onlineUrl, reminders }
+function validateRecurrenceRange(recurrence, date) {
+  if (recurrence && recurrence.until < date) throw new Error('Tanggal akhir pengulangan harus setelah tanggal mulai.')
+}
+
+function normalizeAllDayAgenda(input, title, details, recurrence) {
+  const date = String(input.date ?? '')
+  if (!isValidDateKey(date)) throw new Error('Tanggal agenda wajib diisi.')
+  validateRecurrenceRange(recurrence, date)
+  return {
+    title,
+    allDay: true,
+    date,
+    startsAt: null,
+    endsAt: null,
+    recurrence,
+    courseId: String(input.courseId ?? ''),
+    ...details,
   }
+}
 
+function normalizeTimedAgenda(input, title, details, recurrence) {
   const start = new Date(input.startsAt)
   const end = new Date(input.endsAt)
   if (!input.startsAt || Number.isNaN(start.valueOf())) throw new Error('Waktu mulai tidak valid.')
   if (!input.endsAt || Number.isNaN(end.valueOf())) throw new Error('Waktu selesai tidak valid.')
   if (end <= start) throw new Error('Waktu selesai harus setelah waktu mulai.')
   const date = localDateKey(start)
-  if (recurrence && recurrence.until < date) throw new Error('Tanggal akhir pengulangan harus setelah tanggal mulai.')
+  validateRecurrenceRange(recurrence, date)
 
   return {
     title,
@@ -136,15 +156,21 @@ export function normalizeAgenda(input) {
     endsAt: end.toISOString(),
     recurrence,
     courseId: String(input.courseId ?? ''),
-    category,
-    categoryColor,
-    location,
-    onlineUrl,
-    reminders,
+    ...details,
   }
 }
 
-export function normalizeOccurrenceException(input) {
+export function normalizeAgenda(input) {
+  const title = String(input.title ?? '').trim()
+  if (!title) throw new Error('Judul agenda wajib diisi.')
+  const details = normalizeAgendaDetails(input)
+  const recurrence = normalizeAgendaRecurrence(input)
+  return input.allDay
+    ? normalizeAllDayAgenda(input, title, details, recurrence)
+    : normalizeTimedAgenda(input, title, details, recurrence)
+}
+
+function normalizeExceptionDetails(input) {
   const title = String(input.title ?? '').trim()
   const topic = String(input.topic ?? '').trim()
   const summary = String(input.summary ?? '').trim()
@@ -172,25 +198,32 @@ export function normalizeOccurrenceException(input) {
   if (input.category !== undefined) exception.category = category
   if (input.categoryColor !== undefined) exception.categoryColor = categoryColor
   if (Array.isArray(input.reminders)) exception.reminders = cancelled ? [] : normalizeReminders(input.reminders, Boolean(input.allDay))
-  if (moved) {
-    const date = String(input.date ?? '')
-    if (!isValidDateKey(date)) throw new Error('Tanggal pertemuan tidak valid.')
-    exception.date = date
-    exception.allDay = Boolean(input.allDay)
-    if (exception.allDay) {
-      exception.startsAt = null
-      exception.endsAt = null
-    } else {
-      const start = new Date(input.startsAt)
-      const end = new Date(input.endsAt)
-      if (!input.startsAt || Number.isNaN(start.valueOf())) throw new Error('Waktu mulai tidak valid.')
-      if (!input.endsAt || Number.isNaN(end.valueOf())) throw new Error('Waktu selesai tidak valid.')
-      if (end <= start) throw new Error('Waktu selesai harus setelah waktu mulai.')
-      exception.date = localDateKey(start)
-      exception.startsAt = start.toISOString()
-      exception.endsAt = end.toISOString()
-    }
+  return { exception, cancelled, moved }
+}
+
+function normalizeMovedException(input, exception) {
+  const date = String(input.date ?? '')
+  if (!isValidDateKey(date)) throw new Error('Tanggal pertemuan tidak valid.')
+  exception.date = date
+  exception.allDay = Boolean(input.allDay)
+  if (exception.allDay) {
+    exception.startsAt = null
+    exception.endsAt = null
+    return
   }
+  const start = new Date(input.startsAt)
+  const end = new Date(input.endsAt)
+  if (!input.startsAt || Number.isNaN(start.valueOf())) throw new Error('Waktu mulai tidak valid.')
+  if (!input.endsAt || Number.isNaN(end.valueOf())) throw new Error('Waktu selesai tidak valid.')
+  if (end <= start) throw new Error('Waktu selesai harus setelah waktu mulai.')
+  exception.date = localDateKey(start)
+  exception.startsAt = start.toISOString()
+  exception.endsAt = end.toISOString()
+}
+
+export function normalizeOccurrenceException(input) {
+  const { exception, moved } = normalizeExceptionDetails(input)
+  if (moved) normalizeMovedException(input, exception)
   return exception
 }
 
@@ -206,53 +239,74 @@ function startOfWeekdayOnOrAfter(value, weekday) {
   return localDateKey(date)
 }
 
+function appendSingleOccurrence(agenda, fromDate, throughDate, results) {
+  if (agenda.date >= fromDate && agenda.date <= throughDate) {
+    results.push({ ...agenda, occurrenceId: `${agenda.id}:${agenda.date}`, originalDate: agenda.date, seriesId: agenda.id })
+  }
+}
+
+function recurringOccurrence(agenda, occurrenceDate, exception) {
+  if (exception?.date && exception.date !== occurrenceDate) {
+    return {
+      ...agenda, ...exception, date: exception.date, occurrenceId: `${agenda.id}:${occurrenceDate}`,
+      originalDate: occurrenceDate, seriesId: agenda.id, exception,
+    }
+  }
+  const occurrenceStart = agenda.allDay ? null : exception?.startsAt ?? occurrenceDateTime(occurrenceDate, agenda.startsAt)
+  const duration = agenda.allDay ? 0 : new Date(agenda.endsAt).valueOf() - new Date(agenda.startsAt).valueOf()
+  const occurrenceEnd = agenda.allDay ? null : exception?.endsAt ?? new Date(new Date(occurrenceStart).valueOf() + duration).toISOString()
+  return {
+    ...agenda,
+    ...exception,
+    title: exception?.title || agenda.title,
+    date: occurrenceDate,
+    startsAt: occurrenceStart,
+    endsAt: occurrenceEnd,
+    occurrenceId: `${agenda.id}:${occurrenceDate}`,
+    originalDate: occurrenceDate,
+    seriesId: agenda.id,
+    exception: exception ?? null,
+  }
+}
+
+function appendMovedExceptions(agenda, emitted, fromDate, throughDate, results) {
+  for (const [originalDate, exception] of Object.entries(agenda.exceptions ?? {})) {
+    if (emitted.has(originalDate) || !exception.date || exception.date < fromDate || exception.date > throughDate) continue
+    results.push({
+      ...agenda, ...exception, title: exception.title || agenda.title, date: exception.date,
+      occurrenceId: `${agenda.id}:${originalDate}`, originalDate, seriesId: agenda.id, exception,
+    })
+  }
+}
+
+function appendWeeklyOccurrences(agenda, fromDate, throughDate, results) {
+  const startDate = startOfWeekdayOnOrAfter(
+    fromDate > agenda.date ? fromDate : agenda.date,
+    dateFromKey(agenda.date).getDay(),
+  )
+  let occurrenceDate = startDate
+  const emitted = new Set()
+  while (occurrenceDate <= throughDate && occurrenceDate <= agenda.recurrence.until) {
+    const exception = agenda.exceptions?.[occurrenceDate]
+    emitted.add(occurrenceDate)
+    if (!exception?.date || exception.date === occurrenceDate || (exception.date >= fromDate && exception.date <= throughDate)) {
+      results.push(recurringOccurrence(agenda, occurrenceDate, exception))
+    }
+    const nextDate = dateFromKey(occurrenceDate)
+    nextDate.setDate(nextDate.getDate() + 7)
+    occurrenceDate = localDateKey(nextDate)
+  }
+  appendMovedExceptions(agenda, emitted, fromDate, throughDate, results)
+}
+
 export function expandAgendaOccurrences(agendas, fromDate, throughDate) {
   const results = []
   for (const agenda of agendas) {
     if (agenda.deletedAt) continue
-    if (agenda.recurrence?.frequency !== 'weekly') {
-      if (agenda.date >= fromDate && agenda.date <= throughDate) {
-        results.push({ ...agenda, occurrenceId: `${agenda.id}:${agenda.date}`, originalDate: agenda.date, seriesId: agenda.id })
-      }
-      continue
-    }
-
-    const baseDate = agenda.date
-    const until = agenda.recurrence.until
-    const startDate = startOfWeekdayOnOrAfter(fromDate > baseDate ? fromDate : baseDate, dateFromKey(baseDate).getDay())
-    let occurrenceDate = startDate
-    const emitted = new Set()
-    while (occurrenceDate <= throughDate && occurrenceDate <= until) {
-      const exception = agenda.exceptions?.[occurrenceDate]
-      emitted.add(occurrenceDate)
-      if (exception?.date && exception.date !== occurrenceDate) {
-        if (exception.date >= fromDate && exception.date <= throughDate) {
-          results.push({ ...agenda, ...exception, date: exception.date, occurrenceId: `${agenda.id}:${occurrenceDate}`, originalDate: occurrenceDate, seriesId: agenda.id, exception })
-        }
-      } else {
-        const occurrenceStart = agenda.allDay ? null : exception?.startsAt ?? occurrenceDateTime(occurrenceDate, agenda.startsAt)
-        const duration = agenda.allDay ? 0 : new Date(agenda.endsAt).valueOf() - new Date(agenda.startsAt).valueOf()
-        const occurrenceEnd = agenda.allDay ? null : exception?.endsAt ?? new Date(new Date(occurrenceStart).valueOf() + duration).toISOString()
-        results.push({
-          ...agenda,
-          ...exception,
-          title: exception?.title || agenda.title,
-          date: occurrenceDate,
-          startsAt: occurrenceStart,
-          endsAt: occurrenceEnd,
-          occurrenceId: `${agenda.id}:${occurrenceDate}`,
-          originalDate: occurrenceDate,
-          seriesId: agenda.id,
-          exception: exception ?? null,
-        })
-      }
-      const nextDate = dateFromKey(occurrenceDate)
-      nextDate.setDate(nextDate.getDate() + 7)
-      occurrenceDate = localDateKey(nextDate)
-    }
-    for (const [originalDate, exception] of Object.entries(agenda.exceptions ?? {})) {
-      if (emitted.has(originalDate) || !exception.date || exception.date < fromDate || exception.date > throughDate) continue
-      results.push({ ...agenda, ...exception, title: exception.title || agenda.title, date: exception.date, occurrenceId: `${agenda.id}:${originalDate}`, originalDate, seriesId: agenda.id, exception })
+    if (agenda.recurrence?.frequency === 'weekly') {
+      appendWeeklyOccurrences(agenda, fromDate, throughDate, results)
+    } else {
+      appendSingleOccurrence(agenda, fromDate, throughDate, results)
     }
   }
   return results.sort((left, right) => byAgendaDate(left, right))
