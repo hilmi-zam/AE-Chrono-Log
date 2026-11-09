@@ -1,0 +1,373 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T00:00:00.000Z",
+  "title": "Design System: Æ Chrono Log — MVP",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Warm Ivory Paper",
+        "canonical": "#fff8f3",
+        "tonalRamp": ["#fffefe", "#fffdfb", "#fffbf9", "#fffaf6", "#fff8f3", "#c7c1be", "#8a8683", "#4d4a49"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Clean Sheet White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#c7c7c7", "#8a8a8a", "#4d4d4d"]
+      },
+      "surface-soft": {
+        "role": "neutral",
+        "displayName": "Bisque Wash",
+        "canonical": "#faf2ec",
+        "tonalRamp": ["#fffefd", "#fefbf9", "#fcf8f5", "#fbf5f1", "#faf2ec", "#c3bdb8", "#87837f", "#4b4947"]
+      },
+      "surface-muted": {
+        "role": "neutral",
+        "displayName": "Oat Linen",
+        "canonical": "#f4ede6",
+        "tonalRamp": ["#fefefd", "#fcfaf8", "#f9f6f2", "#f7f2ed", "#f4ede7", "#beb9b3", "#84807c", "#494745"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Soft Charcoal Ink",
+        "canonical": "#1e1b17",
+        "tonalRamp": ["#ededec", "#bcbbb9", "#8a8886", "#595653", "#23201c", "#171512", "#100f0c", "#090807"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Warm Taupe",
+        "canonical": "#6f625b",
+        "tonalRamp": ["#f3f2f2", "#d4d0ce", "#b4adaa", "#948b86", "#72655e", "#574c47", "#3c3531", "#211d1b"]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline Sand",
+        "canonical": "#e8e1db",
+        "tonalRamp": ["#fdfdfc", "#f8f6f4", "#f3efec", "#eee9e4", "#e8e2dc", "#b5b0ab", "#7d7a76", "#464442"]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Burnt Terracotta",
+        "canonical": "#9f3c16",
+        "tonalRamp": ["#f7efec", "#e2c5b9", "#cd9a86", "#b86f53", "#a1401b", "#7c2f11", "#56200c", "#301207"]
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Deep Rust",
+        "canonical": "#822f12",
+        "tonalRamp": ["#f5eeec", "#dac1b8", "#be9384", "#a36550", "#853317", "#65250e", "#46190a", "#270e05"]
+      },
+      "sage": {
+        "role": "secondary",
+        "displayName": "Muted Sage",
+        "canonical": "#486645",
+        "tonalRamp": ["#f0f3f0", "#c8d1c7", "#a0af9e", "#788e75", "#4c6949", "#385036", "#273725", "#161f15"]
+      },
+      "slate-unused": {
+        "role": "secondary",
+        "displayName": "Reserved Slate (unused)",
+        "canonical": "#4c5e6a",
+        "tonalRamp": ["#f1f2f3", "#c9cfd2", "#a2abb2", "#7b8891", "#50616d", "#3b4953", "#293339", "#171c20"]
+      },
+      "danger": {
+        "role": "primary",
+        "displayName": "Brick Red",
+        "canonical": "#9a3428",
+        "tonalRamp": ["#f7efee", "#e1c2bf", "#ca958f", "#b46960", "#9c382c", "#78291f", "#531c16", "#2e100c"]
+      },
+      "overdue": {
+        "role": "primary",
+        "displayName": "Overdue Clay",
+        "canonical": "#a33e32",
+        "tonalRamp": ["#f8f0ef", "#e3c5c2", "#cf9b94", "#bb7067", "#a54236", "#7f3027", "#58211b", "#31130f"]
+      },
+      "success-wash": {
+        "role": "tertiary",
+        "displayName": "Sage Wash",
+        "canonical": "#eaf1e8",
+        "tonalRamp": ["#fdfefd", "#f9fbf8", "#f4f8f3", "#eff5ee", "#eaf1e8", "#b7bcb5", "#7e827d", "#464846"]
+      },
+      "success-ink": {
+        "role": "tertiary",
+        "displayName": "Deep Pine",
+        "canonical": "#304e2f",
+        "tonalRamp": ["#eef1ee", "#c1cac1", "#93a393", "#667c65", "#345233", "#253d25", "#1a2a19", "#0e170e"]
+      },
+      "warning-wash": {
+        "role": "tertiary",
+        "displayName": "Amber Wash",
+        "canonical": "#fff4e5",
+        "tonalRamp": ["#fffefd", "#fffcf7", "#fff9f1", "#fff7ec", "#fff4e6", "#c7beb3", "#8a847c", "#4d4945"]
+      },
+      "warning-ink": {
+        "role": "tertiary",
+        "displayName": "Bronze Ink",
+        "canonical": "#70491e",
+        "tonalRamp": ["#f4f0ed", "#d4c8bc", "#b5a08a", "#957859", "#734d23", "#573917", "#3c2710", "#221609"]
+      },
+      "category-clay": {
+        "role": "tertiary",
+        "displayName": "Clay",
+        "canonical": "#bd5b43",
+        "tonalRamp": ["#faf2f0", "#ebcec7", "#ddaa9d", "#ce8674", "#be5e47", "#934734", "#663124", "#391b14"]
+      },
+      "category-sage": {
+        "role": "tertiary",
+        "displayName": "Eucalyptus",
+        "canonical": "#567362",
+        "tonalRamp": ["#f1f4f2", "#ccd5d0", "#a7b6ad", "#82978b", "#597665", "#435a4c", "#2e3e35", "#1a231d"]
+      },
+      "category-slate": {
+        "role": "tertiary",
+        "displayName": "Dusk Slate",
+        "canonical": "#537091",
+        "tonalRamp": ["#f1f4f6", "#cbd4de", "#a6b5c6", "#8095ae", "#567393", "#415771", "#2d3c4e", "#19222c"]
+      },
+      "category-plum": {
+        "role": "tertiary",
+        "displayName": "Dusty Plum",
+        "canonical": "#8a6d9d",
+        "tonalRamp": ["#f6f3f7", "#dcd3e2", "#c2b3cc", "#a893b6", "#8c709f", "#6c557a", "#4b3b55", "#29212f"]
+      },
+      "category-ochre": {
+        "role": "tertiary",
+        "displayName": "Antique Ochre",
+        "canonical": "#b28a38",
+        "tonalRamp": ["#f9f6ef", "#e8dcc3", "#d7c298", "#c6a86c", "#b48c3c", "#8b6c2c", "#604b1e", "#352911"]
+      },
+      "category-cocoa": {
+        "role": "tertiary",
+        "displayName": "Cocoa",
+        "canonical": "#8b6651",
+        "tonalRamp": ["#f6f3f1", "#dcd1cb", "#c3afa5", "#a98e7e", "#8d6954", "#6c503f", "#4b372c", "#2a1f18"]
+      },
+      "category-steel": {
+        "role": "tertiary",
+        "displayName": "Harbor Steel",
+        "canonical": "#6f7d8c",
+        "tonalRamp": ["#f3f5f6", "#d4d8dd", "#b4bbc3", "#949faa", "#72808e", "#57626d", "#3c444c", "#21262a"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The single page title in the top bar."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Welcome greeting; panel, dialog, and course-detail headings use smaller Georgia sizes."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Record, task, inbox, and course names inside rows."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default UI copy and dialog controls."
+      },
+      "label": {
+        "displayName": "Ledger Label",
+        "purpose": "Uppercase mono eyebrows, stat labels, and counters."
+      },
+      "metric": {
+        "displayName": "Metric",
+        "purpose": "Stat-card numbers in Georgia."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sheet-rest",
+        "value": "0 1px 5px #29292208",
+        "purpose": "Near-invisible print edge on panels."
+      },
+      {
+        "name": "dialog-lift",
+        "value": "0 18px 80px #29292233",
+        "purpose": "The one structural shadow, used by the modal dialog."
+      },
+      {
+        "name": "scrim",
+        "value": "background: #25251f80; backdrop-filter: blur(2px)",
+        "purpose": "Dims and blurs the page behind a dialog."
+      },
+      {
+        "name": "bar-blur",
+        "value": "background: #fffaf6f2; backdrop-filter: blur(14px)",
+        "purpose": "Translucent fixed mobile navigation bar at 640px and below."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-ease",
+        "value": "background .15s, border-color .15s, transform .15s",
+        "purpose": "Default button hover and press transition."
+      },
+      {
+        "name": "press-nudge",
+        "value": "transform: translateY(1px)",
+        "purpose": "Active-state feedback on buttons."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce → transition-duration .01ms; animation-duration .01ms; animation-iteration-count 1",
+        "purpose": "Disables motion while preserving state changes."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "900px",
+        "purpose": "Sidebar narrows to 205px; top bar stacks; settings becomes one column."
+      },
+      {
+        "name": "mobile",
+        "value": "640px",
+        "purpose": "Sidebar becomes a seven-item bottom bar; grids collapse; dialog actions stick."
+      },
+      {
+        "name": "minimum",
+        "value": "320px",
+        "purpose": "Supported minimum width with no horizontal page overflow."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single most important action on a screen; Burnt Terracotta with white text.",
+      "html": "<button class=\"ds-btn-primary\">+ Tambah</button>",
+      "css": ".ds-btn-primary { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; padding: 9px 15px; border: 1px solid var(--accent, #9f3c16); border-radius: 8px; background: var(--accent, #9f3c16); color: #fff; font-family: \"Segoe UI\", Arial, sans-serif; font-size: 14px; font-weight: 600; line-height: 1.55; cursor: pointer; transition: background .15s, border-color .15s, transform .15s; } .ds-btn-primary:hover { border-color: var(--accent-dark, #822f12); background: var(--accent-dark, #822f12); } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline: 2px solid var(--accent, #9f3c16); outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Default bordered action; Clean Sheet White with a Hairline Sand stroke.",
+      "html": "<button class=\"ds-btn-secondary\">Edit agenda</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; padding: 9px 15px; border: 1px solid var(--line, #e8e1db); border-radius: 8px; background: var(--surface, #fff); color: var(--ink, #1e1b17); font-family: \"Segoe UI\", Arial, sans-serif; font-size: 14px; font-weight: 600; line-height: 1.55; cursor: pointer; transition: background .15s, border-color .15s, transform .15s; } .ds-btn-secondary:hover { border-color: #c9b9ae; background: var(--surface-soft, #faf2ec); } .ds-btn-secondary:active { transform: translateY(1px); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--accent, #9f3c16); outline-offset: 3px; }"
+    },
+    {
+      "name": "Sidebar Navigation Item",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Desktop rail item with terracotta glyph; becomes the seven-column bottom bar below 640px.",
+      "html": "<button class=\"ds-nav-item ds-nav-item--active\"><span class=\"ds-nav-symbol\">◫</span>Hari ini</button>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 13px; width: 100%; padding: 11px 12px; border: 0; border-radius: 8px; background: transparent; color: #5f6058; font-family: \"Segoe UI\", Arial, sans-serif; font-size: 14px; text-align: left; cursor: pointer; } .ds-nav-item:hover, .ds-nav-item--active { background: var(--surface-muted, #f4ede6); color: var(--ink, #1e1b17); } .ds-nav-item--active { font-weight: 650; } .ds-nav-symbol { width: 18px; color: var(--accent, #9f3c16); font-size: 17px; text-align: center; }"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "The primary content sheet: white, hairline border, mono eyebrow and Georgia title.",
+      "html": "<section class=\"ds-panel\"><div class=\"ds-panel-head\"><div><p class=\"ds-eyebrow\">JADWAL</p><h2>Agenda hari ini</h2></div><button class=\"ds-text-button\">Lihat agenda →</button></div><p class=\"ds-panel-copy\">Hari ini punya ruang untuk dikerjakan satu per satu.</p></section>",
+      "css": ".ds-panel { padding: 22px; border: 1px solid var(--line, #e8e1db); border-radius: 12px; background: var(--surface, #fff); color: var(--ink, #1e1b17); box-shadow: 0 1px 5px #29292208; } .ds-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; } .ds-eyebrow { margin: 0 0 4px; color: var(--muted, #6f625b); font-family: \"Cascadia Code\", Consolas, monospace; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; } .ds-panel h2 { margin: 0; font-family: Georgia, \"Times New Roman\", serif; font-size: 22px; font-weight: 500; } .ds-panel-copy { margin: 0; color: var(--muted, #6f625b); font-family: \"Segoe UI\", Arial, sans-serif; font-size: 12px; line-height: 1.55; } .ds-text-button { padding: 4px; border: 0; background: transparent; color: var(--accent-dark, #822f12); font-family: \"Segoe UI\", Arial, sans-serif; font-size: 12px; font-weight: 650; cursor: pointer; } .ds-text-button:hover { text-decoration: underline; }"
+    },
+    {
+      "name": "Stat Card",
+      "kind": "card",
+      "refersTo": "stat-card",
+      "description": "Dashboard summary tile: Warm Taupe mono label and a 29px Georgia numeral in terracotta.",
+      "html": "<article class=\"ds-stat-card\"><span>AGENDA HARI INI</span><strong>03</strong></article>",
+      "css": ".ds-stat-card { display: flex; min-height: 86px; align-items: center; justify-content: space-between; padding: 16px 19px; border: 1px solid var(--line, #e8e1db); border-radius: 9px; background: var(--surface, #fff); } .ds-stat-card span { color: var(--muted, #6f625b); font-family: \"Cascadia Code\", Consolas, monospace; font-size: 10px; letter-spacing: .09em; } .ds-stat-card strong { color: var(--accent, #9f3c16); font-family: Georgia, \"Times New Roman\", serif; font-size: 29px; font-weight: 500; }"
+    },
+    {
+      "name": "Agenda Record Row",
+      "kind": "custom",
+      "refersTo": "agenda-row",
+      "description": "Signature colored-left-rail row with tabular time, title, metadata, and small actions.",
+      "html": "<article class=\"ds-agenda-row\" style=\"--event-color: #bd5b43\"><div class=\"ds-time\">08.00–09.40</div><div class=\"ds-copy\"><h3>Rekayasa Perangkat Lunak</h3><p>Kuliah · Ruang 302</p></div><button class=\"ds-btn-small\">Edit agenda</button><button class=\"ds-icon-btn\" aria-label=\"Hapus agenda\">×</button></article>",
+      "css": ".ds-agenda-row { display: flex; min-width: 0; align-items: center; gap: 14px; padding: 13px 0 13px 10px; border-top: 1px solid #efeee9; border-left: 3px solid var(--event-color, var(--accent, #9f3c16)); font-family: \"Segoe UI\", Arial, sans-serif; } .ds-time { min-width: 104px; color: var(--accent-dark, #822f12); font-size: 12px; font-variant-numeric: tabular-nums; } .ds-copy { min-width: 0; flex: 1; } .ds-copy h3 { margin: 0 0 3px; color: var(--ink, #1e1b17); font-size: 13px; font-weight: 650; overflow-wrap: anywhere; } .ds-copy p { margin: 0; color: var(--muted, #6f625b); font-size: 11px; } .ds-btn-small { display: inline-flex; min-height: 32px; align-items: center; justify-content: center; padding: 5px 10px; border: 1px solid var(--line, #e8e1db); border-radius: 8px; background: var(--surface, #fff); color: var(--ink, #1e1b17); font-size: 11px; font-weight: 600; cursor: pointer; } .ds-btn-small:hover { border-color: #c9b9ae; background: var(--surface-soft, #faf2ec); } .ds-icon-btn { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #898a81; font-size: 21px; cursor: pointer; } .ds-icon-btn:hover { background: #f3e7e2; color: var(--accent-dark, #822f12); }"
+    },
+    {
+      "name": "Search Box",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Global search field in the top bar; typing switches to the Search page.",
+      "html": "<label class=\"ds-search-box\"><span aria-hidden=\"true\">⌕</span><input type=\"search\" placeholder=\"Cari di ruangmu…\" aria-label=\"Cari di ruangmu\"></label>",
+      "css": ".ds-search-box { display: flex; width: min(250px, 24vw); align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line, #e8e1db); border-radius: 8px; background: var(--surface, #fff); color: var(--muted, #6f625b); font-size: 18px; } .ds-search-box input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink, #1e1b17); font-family: \"Segoe UI\", Arial, sans-serif; font-size: 12px; } .ds-search-box:focus-within { outline: 2px solid var(--accent, #9f3c16); outline-offset: 3px; }"
+    },
+    {
+      "name": "Dialog Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label plus native input inside the record dialog; 6px radius, 10×11px padding.",
+      "html": "<label class=\"ds-field\"><span>Judul</span><input value=\"Rapat organisasi\"></label>",
+      "css": ".ds-field { display: grid; gap: 4px; font-family: \"Segoe UI\", Arial, sans-serif; } .ds-field > span { color: var(--ink, #1e1b17); font-size: 12px; font-weight: 650; } .ds-field input { width: 100%; padding: 10px 11px; border: 1px solid var(--line, #e8e1db); border-radius: 6px; background: var(--surface, #fff); color: var(--ink, #1e1b17); font-size: 14px; } .ds-field input:focus-visible { outline: 2px solid var(--accent, #9f3c16); outline-offset: 3px; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "status-pill",
+      "description": "Quiet status chip with optional sage dot for Lokal / Simulasi lokal / Belum aktif.",
+      "html": "<span class=\"ds-status-pill\"><span class=\"ds-status-dot\"></span> Lokal</span>",
+      "css": ".ds-status-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid var(--line, #e8e1db); border-radius: 20px; color: var(--muted, #6f625b); font-family: \"Segoe UI\", Arial, sans-serif; font-size: 11px; white-space: nowrap; } .ds-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green, #486645); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Personal Desk",
+    "overview": "This is a single person's desk in a quiet, well-lit room: warm paper, a few objects placed with care, and nothing on the surface that does not help answer \"what do I do today?\" The interface is calm but not empty — it is arranged, the way a working desk is arranged. Warm ivory paper carries the whole product; white sheets hold the work; biscuit and oat tones mark the places where one sheet rests on another. Structure comes from hairlines, not boxes, so the surface stays light enough to scan in the morning and legible on a modest laptop.\n\nThe editorial voice is deliberate. Georgia gives page titles, greetings, and key numbers a printed-report gravity; Segoe UI keeps every control and label plain and quick; Cascadia Code turns eyebrows, counters, and metadata into margin annotations. Burnt terracotta is the single voice of action and attention, muted sage the voice of tasks and \"all is well\", and the seven earthy category colors belong only to the user's own data. Motion is minimal and functional: 150 ms state transitions, a 1 px press, and nothing that performs. Depth is tonal before it is shadowed; only dialogs and the mobile tab bar actually lift off the page.\n\nThe system is Indonesian by default, offline-first by requirement, and deliberately dependency-light: system fonts, text-glyph icons, and no imagery. It should feel like a tool someone made for their own mornings — precise, warm, and honest about what it does not yet do.",
+    "keyCharacteristics": [
+      "Warm paper field with white sheets and hairline edges.",
+      "Three typographic voices: humanist sans for UI, Georgia serif for titles and numbers, mono for labels.",
+      "Burnt terracotta for action and attention; sage for tasks and settled state.",
+      "Flat-by-default surfaces; real elevation only for dialogs and the mobile tab bar.",
+      "Text-glyph iconography (◫ ▦ ✓ ▤ ↳ ◷ ⚙ ⌕ ×) instead of an icon library.",
+      "Responsive down to 320 px, with a translucent bottom tab bar on phones."
+    ],
+    "rules": [
+      {
+        "name": "The Two-Voice Color Rule",
+        "body": "Terracotta means \"act or look here\"; sage means \"task, done, or offline-ok\". Do not use terracotta for success, and do not use sage for a primary action.",
+        "section": "colors"
+      },
+      {
+        "name": "The 3px Rail Rule",
+        "body": "Category identity enters a row only as a 3 px left rail (or a 3 px left border on a calendar chip). Never fill a whole card or row with a category color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "UI copy is Segoe UI; page titles, greetings, and hero numerals are Georgia; labels and metadata are Cascadia Code. Never set body copy in the serif, and never set prose in the mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The System-Font Rule",
+        "body": "No webfonts. Georgia, Segoe UI, and Cascadia Code are the palette; fallbacks must stay metric-plausible so the layout does not shift offline.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-by-Default Rule",
+        "body": "Surfaces are flat at rest. Depth is a response to state or modality — a dialog opening, a bar floating over content — never a decoration for a static card.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Hairline Rule",
+        "body": "Structure is drawn with 1 px Hairline Sand, not ink borders and not shadow stacks. If a boundary needs to be stronger, change the paper tone before thickening the line.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep exactly one page title per screen, in Georgia at clamp(30px, 3vw, 42px), weight 500, with tighter tracking.",
+      "Do separate surfaces with paper tones first and hairlines second; save shadow for dialogs and the floating mobile bar.",
+      "Do keep category and course color on the 3 px rail, chip edge, or color bar only.",
+      "Do pair terracotta with white text at 600 weight and a minimum 40 px height.",
+      "Do use the established text glyphs for icons so the product stays dependency-free.",
+      "Do write interface copy in Indonesian and keep the Æ ligature in the product name.",
+      "Do preserve the 2 px terracotta focus ring with 3 px offset, and verify 320 px with no horizontal overflow.",
+      "Do test the morning dashboard offline before adding anything decorative."
+    ],
+    "donts": [
+      "Don't apply these tokens to the v1.0 dashboard in dashboard/; that surface, its Cloudflare Worker, and its D1 data are governed separately and must not be modified.",
+      "Don't introduce webfonts, icon fonts, or SVG icon packs; the system-font and glyph approach is a product constraint.",
+      "Don't use pure black, cool grays, or blue/purple chrome. Cool hues exist only in the unused --blue token and inside user-selected data accents.",
+      "Don't fill a card, row, or panel with a category color; the 3 px rail is the whole allowance.",
+      "Don't add gradients, glassmorphism, or stacked shadows. The only blur is the dialog scrim and the mobile tab bar.",
+      "Don't set body copy in Georgia or Cascadia Code; those voices are reserved for titles/numerals and labels/meta.",
+      "Don't use terracotta for success or completed states; sage owns that meaning.",
+      "Don't add badges, counts, or accent color without a functional reason."
+    ]
+  }
+}

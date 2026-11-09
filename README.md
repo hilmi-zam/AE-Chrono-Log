@@ -1,8 +1,16 @@
 # Æ Chrono Log
 
-> **Status: v1.0 siap dipakai pribadi.** Dashboard dapat dibuka online di [https://ae-chrono-log.hilmiizamzamii.workers.dev](https://ae-chrono-log.hilmiizamzamii.workers.dev) dan meminta password Worker. API dilindungi HTTP Basic Authentication dengan pembatasan percobaan login. Tetap siapkan backup sebelum menyimpan data penting.
+> **Aplikasi yang berjalan:** v1.0 pribadi untuk keuangan dan catatan. Dashboard produksi: [ae-chrono-log.hilmiizamzamii.workers.dev](https://ae-chrono-log.hilmiizamzamii.workers.dev). **Arah produk berikutnya:** MVP personal life management sesuai baseline SRS v1.22; implementasinya belum dimulai dan belum boleh diasumsikan sudah tersedia.
 
-## Fitur
+## Status realignment
+
+Repositori saat ini memuat aplikasi lama: dashboard Vite, API Cloudflare Worker, dan D1. Aplikasi lama tetap dipertahankan dan tidak boleh diganti atau dimigrasikan tanpa persetujuan dan rencana perlindungan data.
+
+SRS hasil wawancara menetapkan MVP baru berisi dashboard harian, kalender/agenda, tugas, mata kuliah, Inbox, Global Search pada modul MVP, notifikasi, offline-sync, login, dan backup. Modul Area Kehidupan penuh ditunda; data MVP tidak wajib memiliki area. Baseline kebutuhan v1.22 telah melengkapi keputusan utama MVP dan backlog, tetapi MVP belum dibangun. Baseline teknisnya adalah PWA/Service Worker, IndexedDB, Worker dan D1 terpisah; tidak ada migrasi data atau perubahan Cloudflare yang dilakukan.
+
+Dokumen wawancara dan SRS berada di folder lokal `Doc/`, yang saat ini diabaikan Git oleh perubahan lokal `.gitignore`. Karena itu, dokumen tersebut tidak ikut dalam checkout repositori saat ini.
+
+## Fitur aplikasi v1.0 yang berjalan
 
 - Mencatat dan melihat pemasukan serta pengeluaran dalam rupiah.
 - Mengubah dan menghapus transaksi; penghapusan meminta konfirmasi.
@@ -107,13 +115,14 @@ Bila deploy bermasalah, buka **Workers & Pages → ae-chrono-log → Deployments
 - Sebelum memakai data pribadi secara rutin, siapkan backup dan tinjau autentikasi, pembatasan percobaan login, serta cara hosting dashboard yang aman.
 - Batas dan harga layanan Cloudflare dapat berubah. Periksa [dokumentasi harga Workers dan D1](https://developers.cloudflare.com/workers/platform/pricing/) sebelum mengambil keputusan yang berpengaruh pada biaya.
 
-## Status dan Pekerjaan Berikutnya
+## Status aplikasi v1.0 dan pekerjaan realignment
 
-- Dashboard dan API kini disajikan oleh satu Worker; deploy dilakukan dengan `npx wrangler deploy` (2026-11-05).
+- Dashboard dan API disajikan oleh satu Worker; deploy dilakukan dengan `npx wrangler deploy` (2026-11-05).
 - Pembatasan percobaan login (5 kali gagal per IP per 15 menit) aktif di produksi dan sudah diuji.
 - Fitur terverifikasi: tambah/ubah/hapus transaksi dan catatan, filter bulan, ringkasan kategori, ekspor CSV (tampilan/semua), pencarian catatan, perpindahan bulan otomatis, pencegahan kirim ganda, status koneksi, dan tampilan 380 px.
 - `schema.sql` tersedia dan telah dicocokkan dengan D1 produksi.
-- Belum selesai: ekspor di atas 100 baris dengan data nyata, prosedur backup rutin, dan domain kustom agar tidak bergantung pada `*.workers.dev`.
+- Realignment masih pada tahap finalisasi kebutuhan; fitur MVP baru belum diimplementasikan.
+- Sebelum staging/deployment MVP: verifikasi biaya dan ketersediaan Cloudflare, dapatkan persetujuan pemilik untuk resource/domain/secrets, serta backup dan uji pemulihan v1.0 pada salinan. Dokumen SRS dan wawancara v1.22 berada di `Doc/` lokal dan masih diabaikan Git.
 - Catatan: sebagian penyedia internet memblokir `*.workers.dev` melalui DNS; lihat bagian Dashboard online.
 
 Lihat `PROJECT_STATUS.md` untuk catatan status terperinci. Dokumen tersebut diabaikan oleh konfigurasi Git lokal dan tidak diunggah ke repositori.
